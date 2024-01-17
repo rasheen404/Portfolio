@@ -177,29 +177,76 @@ export const education = [
 
 export const projects = [
   {
-    id: 9,
-    title: "Trackify",
-    date: "Jun 2023 - Jul 2023",
+    id: 0,
+    title: "Age Calculator",
+    date: "Jun 2023",
     description:
-      "Trackify is a web application designed to streamline task management and enhance productivity in the workplace. It provides a user-friendly interface for employers to keep track of their employees' daily work activities and empowers employees to log their tasks efficiently. \nAdmin Credentials: # Email: testadmin@gmail.com #Password- 123@testadmin, Employee Credentials:	#Email: testemployee@gmail.com	#Password- 123@Testemployee",
+      "An age calculator is a tool or application designed to determine a person's age based on their date of birth and the current date. It provides a quick and convenient way to calculate the number of years, months, and days between two dates, typically the birthdate and the present date.",
     image:
-      "https://user-images.githubusercontent.com/64485885/255202416-e1f89b04-2788-45b0-abc2-9dec616669e2.png",
+      "https://i.ibb.co/Lk6Cc2Y/agecalculator.png",
     tags: [
-      "Docker",
-      "AWS",
-      "DuckDNS",
-      "Eslint",
-      "Husky",
-      "CI/CD",
-      "React Js",
-      "MongoDb",
-      "Node Js",
-      "Express Js",
-      "Redux",
+      "HTML",
+      "CSS",
+      "JavaScript",
+      
     ],
     category: "web app",
-    github: "https://github.com/rishavchanda/Trackify",
-    webapp: "https://trackify.duckdns.org",
+    github: "https://github.com/rasheen404/Age-calculator.git",
+    webapp: "https://rasheen404.github.io/Age-calculator/",
+  },
+  {
+    id: 1,
+    title: "Stop Watch",
+    date: "july 2023",
+    description:
+      "A stopwatch is a timekeeping device designed to measure the elapsed time between its activation and deactivation. Unlike traditional clocks, which display the current time, a stopwatch is specifically focused on measuring the duration of an event",
+    image:
+      "https://i.ibb.co/ZT3Ywz4/stop-watch.png",
+    tags: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      
+    ],
+    category: "web app",
+    github: "https://github.com/rasheen404/Stop-watch.git",
+    webapp: "https://rasheen404.github.io/Stop-watch/",
+  },
+  {
+    id: 2,
+    title: "Number Guessing Game",
+    date: "Aug 2023",
+    description:
+      "A number guessing game is an entertaining and interactive activity where a player attempts to identify a secret number within a predefined range. This classic game is often employed to enhance logical thinking and numerical skills. ",
+    image:
+      "https://i.ibb.co/JCgrF0C/game.png",
+    tags: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      
+    ],
+    category: "web app",
+    github: "https://github.com/rasheen404/Number-Guessing-Game.git",
+    webapp: "https://rasheen404.github.io/Number-Guessing-Game/",
+  },
+  {
+    id: 2,
+    title: "Counter App",
+    date: "Sep 2023",
+    description:
+      "A counter app is a digital tool designed to keep track of numerical counts or tallies. It offers a convenient and efficient way to monitor and record the occurrence of events or items by incrementing or decrementing a numerical value.",
+    image:
+      "https://i.ibb.co/std0jJN/counter.png",
+    tags: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      
+    ],
+    category: "web app",
+    github: "https://github.com/rasheen404/CounterApp.git",
+    webapp: "https://rasheen404.github.io/CounterApp/",
   },
  
 ];
