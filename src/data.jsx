@@ -1,4 +1,5 @@
 import React from 'react';
+import cvFile from "./assets/RESUME.pdf";
 import {
     BriefcaseIcon,
     GraduationCapIcon,
@@ -33,13 +34,13 @@ export const ProjectIcons = {
 };
 
 export const portfolioData = {
-    name: "Mohammed Rasheen K",
+    name: "Mohammed Rasheen",
     title: "Java Full-Stack Engineer",
     email: "mohammedrasheen2001@gmail.com",
-    location: "Kozhikode, India",
-    linkedin: "https://www.linkedin.com/in/mohammed-rasheen-k",
-    github: "https://github.com/rasheen-k",
-    cv_url: "/Mohammed Rasheen K - Java Developer.pdf",
+    location: "Kerala, India",
+     linkedin: "https://www.linkedin.com/in/mohammed-rasheen-k-88bb6b289",
+    github: "https://github.com/rasheen404",
+    cv_url: cvFile,
     summary: "A dynamic Java Full-Stack Engineer with two years of professional experience in engineering enterprise-level applications. My expertise lies in architecting scalable microservices and secure REST APIs with the Spring Framework. I am driven by the challenge of solving complex problems with clean, object-oriented code and am eager to contribute my skills to a forward-thinking team dedicated to innovation.",
     skills: {
         "Tools & Technologies": ["Java", "SpringBoot", "Hibernate", "RESTful APIs", "JPA", "SQL", "AWS S3", "Saml SSO", "OOP", "DSA", "JSP"],
@@ -56,7 +57,7 @@ export const portfolioData = {
     projects: [ 
         { name: "Airport Management System", period: "Feb 2024 - Present", points: ["Translated business requirements into functional, efficient code for application logic.", "Integrated backend systems with external services via RESTful APIs.", "Designed and implemented APIs for the mobile application to enhance accessibility.", "Integrated third-party APIs to streamline operational workflows."]},
         { name: "TuneHub App", period: "Jul 2023 - Jan 2024", points: ["Developed secure user authentication and registration modules.", "Implemented a subscription system using Razorpay for payment processing.", "Created scalable APIs and backend logic with Spring Boot for the web application."]},
-        { name: "Spring Auth Server", period: "Mid 2023", points: ["Engineered a centralized authentication server using Spring Security and JWT.", "Implemented OAuth 2.0 and OIDC protocols for secure tokenization.", "Managed client registrations and JWT issuance for microservices.", "Ensured secure, stateless communication across the distributed system."]}
+        { name: "Spring Auth Server", period: "Jun 2025", points: ["Engineered a centralized authentication server using Spring Security and JWT.", "Implemented OAuth 2.0 and OIDC protocols for secure tokenization.", "Managed client registrations and JWT issuance for microservices.", "Ensured secure, stateless communication across the distributed system."]}
     ]
 };
 

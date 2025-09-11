@@ -14,7 +14,7 @@ export const Hero = () => {
                 <h2 className="text-2xl md:text-3xl text-[var(--text-secondary)] mb-8 h-10">{typedTitle}<span className="typing-cursor"></span></h2>
                 <p className="text-lg text-[var(--text-primary)] mb-8">{portfolioData.summary}</p> 
                 <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-6">
-                    <a href={portfolioData.cv_url} download className="flex items-center gap-2 bg-gradient-to-r from-[var(--gradient-start)] to-[var(--gradient-end)] text-white font-semibold py-3 px-6 rounded-lg transition-transform hover:scale-105 shadow-lg flex-shrink-0">
+                    <a href={portfolioData.cv_url} download="Mohammed_Rasheen_K_Java_Developer.pdf" className="flex items-center gap-2 bg-gradient-to-r from-[var(--gradient-start)] to-[var(--gradient-end)] text-white font-semibold py-3 px-6 rounded-lg transition-transform hover:scale-105 shadow-lg flex-shrink-0">
                         <DownloadIcon /> Download CV
                     </a>
                     <div className="flex items-center gap-6 text-[var(--text-secondary)]">
