@@ -77,13 +77,19 @@ export const GlobalStyles = () => (
             -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
-            transform-style: preserve-3d;
-            transform: perspective(1000px);
         }
 
         .glass-effect:hover {
             border-color: var(--accent-glow);
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .interactive-glass {
+             transform-style: preserve-3d;
+             transform: perspective(1000px);
+        }
+        
+        .interactive-glass:hover {
             transform: perspective(1000px) translateY(-5px) rotateX(5deg) scale(1.02);
         }
         
@@ -157,6 +163,43 @@ export const GlobalStyles = () => (
             70% { box-shadow: 0 0 0 10px rgba(167, 139, 250, 0); }
             100% { box-shadow: 0 0 0 0 rgba(167, 139, 250, 0); }
         }
+
+        /* --- Wireframe Cube Styles --- */
+        .cube-container {
+            width: 250px;
+            height: 250px;
+            perspective: 1000px;
+        }
+
+        .cube {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+            animation: rotate-cube 20s infinite linear;
+        }
+
+        @keyframes rotate-cube {
+            from { transform: rotateY(0deg) rotateX(0deg); }
+            to { transform: rotateY(360deg) rotateX(360deg); }
+        }
+
+        .cube .face {
+            position: absolute;
+            width: 250px;
+            height: 250px;
+            border: 2px solid var(--accent-glow);
+            background: radial-gradient(circle, var(--blob-color-1) 0%, rgba(167,139,250,0) 70%);
+            box-shadow: inset 0 0 20px var(--blob-color-2);
+        }
+
+        .face.front  { transform: rotateY(0deg) translateZ(125px); }
+        .face.back   { transform: rotateY(180deg) translateZ(125px); }
+        .face.right  { transform: rotateY(90deg) translateZ(125px); }
+        .face.left   { transform: rotateY(-90deg) translateZ(125px); }
+        .face.top    { transform: rotateX(90deg) translateZ(125px); }
+        .face.bottom { transform: rotateX(-90deg) translateZ(125px); }
+
     `}</style>
 );
 
