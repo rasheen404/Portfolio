@@ -70,7 +70,18 @@ export const GlobalStyles = () => (
         a, button, input {
             cursor: none;
         }
-        
+
+        /* --- Hide scrollbar (page + all scrollable elements) --- */
+        ::-webkit-scrollbar {
+            width: 0px;
+            height: 0px;
+        }
+
+        body, * {
+            -ms-overflow-style: none;  /* IE & Edge */
+            scrollbar-width: none;     /* Firefox */
+        }
+
         .glass-effect {
             background: var(--glass-bg);
             backdrop-filter: blur(16px);
@@ -202,4 +213,3 @@ export const GlobalStyles = () => (
 
     `}</style>
 );
-
