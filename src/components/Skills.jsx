@@ -1,173 +1,158 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import { portfolioData, SkillIcons } from '../data.jsx';
-import { CheckCircleIcon, GridIcon, XIcon } from './Icons';
+import { XIcon } from './Icons';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ScrollReveal, StaggerContainer, StaggerItem, TiltCard, TextReveal, Counter } from './AnimationKit';
+
+const categoryMeta = {
+    "Tools & Technologies": {
+        icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>,
+        color: 'from-indigo-500/10 to-violet-500/10',
+        accent: 'text-indigo-500',
+    },
+    "Developer Tools": {
+        icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>,
+        color: 'from-emerald-500/10 to-teal-500/10',
+        accent: 'text-emerald-500',
+    },
+    "Soft Skills": {
+        icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>,
+        color: 'from-amber-500/10 to-orange-500/10',
+        accent: 'text-amber-500',
+    },
+};
+
+const SkillPill = ({ skill, index }) => (
+    <motion.div
+        variants={{
+            hidden: { opacity: 0, y: 20, scale: 0.8 },
+            visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.4, ease: [0.25, 0.46, 0.45, 0.94] } },
+        }}
+        whileHover={{ scale: 1.05, y: -2 }}
+        transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+        className="group flex items-center gap-2.5 px-4 py-2 rounded-xl bg-gray-50 dark:bg-white/[0.03] border border-gray-200/80 dark:border-white/[0.04] hover:border-accent/30 hover:bg-accent/5 dark:hover:bg-accent/[0.06] transition-colors duration-300 cursor-default"
+    >
+        {SkillIcons[skill.replace(/\s+/g, '')] && (
+            <span className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-accent transition-colors flex items-center justify-center">
+                {React.createElement(SkillIcons[skill.replace(/\s+/g, '')])}
+            </span>
+        )}
+        <span className="text-sm font-medium text-gray-600 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-gray-200 transition-colors">
+            {skill}
+        </span>
+    </motion.div>
+);
 
 const SkillModal = ({ skills, onClose }) => {
-    useEffect(() => {
-        const handleEsc = (event) => {
-            if (event.keyCode === 27) onClose();
-        };
+    React.useEffect(() => {
+        const handleEsc = (e) => { if (e.key === 'Escape') onClose(); };
         window.addEventListener('keydown', handleEsc);
-        document.body.classList.add('modal-open');
-
-        return () => {
-            window.removeEventListener('keydown', handleEsc);
-            document.body.classList.remove('modal-open');
-        };
+        document.body.style.overflow = 'hidden';
+        return () => { window.removeEventListener('keydown', handleEsc); document.body.style.overflow = ''; };
     }, [onClose]);
 
     return (
-        <div 
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm"
-            onClick={onClose}
-        >
-            <div 
-                className="glass-effect w-full max-w-4xl max-h-[80vh] overflow-y-auto rounded-2xl p-8 m-4 animate-fade-in"
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-white/60 dark:bg-dark-950/80 backdrop-blur-sm" onClick={onClose} />
+            <motion.div
+                initial={{ opacity: 0, scale: 0.9, y: 40 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: 40 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="relative w-full max-w-3xl max-h-[80vh] overflow-y-auto glass-card p-8 md:p-10"
                 onClick={e => e.stopPropagation()}
             >
-                <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-3xl font-bold gradient-text">All Skills</h3>
-                    <button onClick={onClose} className="text-[var(--text-secondary)] hover:text-[var(--text-primary)]">
+                <div className="flex justify-between items-center mb-8">
+                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white">Full Stack</h3>
+                    <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] text-gray-500 hover:text-gray-900 dark:hover:text-white transition-all">
                         <XIcon />
                     </button>
                 </div>
-                
-                {Object.entries(skills).map(([category, skillList]) => (
-                    <div key={category} className="mb-8">
-                        <h4 className="text-xl font-semibold text-[var(--text-primary)] border-b-2 border-[var(--border-color)] pb-2 mb-4">{category}</h4>
-                        <div className="flex flex-wrap gap-3">
-                            {skillList.map(skill => (
-                                <span key={skill} className="flex items-center gap-2 bg-[var(--light-bg)] px-4 py-2 rounded-full text-[var(--text-primary)] text-sm font-medium">
-                                    {SkillIcons[skill.replace(/\s+/g, '')] && <span className="text-[var(--accent-glow)]">{React.createElement(SkillIcons[skill.replace(/\s+/g, '')])}</span>}
-                                    {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <style>{`@keyframes fade-in { 0% { opacity: 0; transform: scale(0.95); } 100% { opacity: 1; transform: scale(1); } } .animate-fade-in { animation: fade-in 0.3s ease-out; }`}</style>
+                <StaggerContainer className="space-y-8" stagger={0.05}>
+                    {Object.entries(skills).map(([category, skillList]) => (
+                        <StaggerItem key={category}>
+                            <h4 className="text-sm font-semibold text-accent uppercase tracking-wider mb-4 flex items-center gap-3">
+                                {category}
+                                <div className="h-px bg-gray-200 dark:bg-white/[0.06] flex-grow" />
+                            </h4>
+                            <div className="flex flex-wrap gap-2">
+                                {skillList.map((skill, i) => <SkillPill key={skill} skill={skill} index={i} />)}
+                            </div>
+                        </StaggerItem>
+                    ))}
+                </StaggerContainer>
+            </motion.div>
         </div>
     );
 };
 
 export const Skills = () => {
-    const containerRef = useRef(null);
-    const skillsRef = useRef([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-
-    const allSkills = [
-        ...portfolioData.skills["Tools & Technologies"],
-        ...portfolioData.skills["Developer Tools"]
-    ];
-
-    useEffect(() => {
-        const container = containerRef.current;
-        if (!container || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-        let radius = container.offsetWidth / 3;
-        if (window.innerWidth < 768) radius = container.offsetWidth / 2.2;
-        if (window.innerWidth < 480) radius = container.offsetWidth / 1.8;
-        
-        let mouseX = 0;
-        let mouseY = 0;
-        let animationFrameId;
-
-        const handleMouseMove = (e) => {
-            const rect = container.getBoundingClientRect();
-            mouseX = (e.clientX - rect.left - rect.width / 2) / rect.width;
-            mouseY = (e.clientY - rect.top - rect.height / 2) / rect.height;
-        };
-
-        container.addEventListener('mousemove', handleMouseMove);
-
-        let angleX = 0.002;
-        let angleY = 0.002;
-
-        const updatePositions = () => {
-            angleX += mouseX * 0.005;
-            angleY += mouseY * 0.005;
-            mouseX *= 0.98;
-            mouseY *= 0.98;
-            
-             if (Math.abs(mouseX) < 0.001 && Math.abs(mouseY) < 0.001) {
-                angleX += 0.0005; 
-                angleY += 0.0005;
-            }
-
-            skillsRef.current.forEach((skill, i) => {
-                if (!skill) return;
-                const phi = Math.acos(-1 + (2 * i) / allSkills.length);
-                const theta = Math.sqrt(allSkills.length * Math.PI) * phi;
-                const sin_t = Math.sin(theta + angleX);
-                const cos_t = Math.cos(theta + angleX);
-                const sin_p = Math.sin(phi + angleY);
-                const cos_p = Math.cos(phi + angleY);
-                const x = radius * cos_t * sin_p;
-                const y = radius * sin_t * sin_p;
-                const z = radius * cos_p;
-                const scale = (z + radius) / (2 * radius);
-                
-                skill.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale})`;
-                skill.style.opacity = `${scale * 0.8 + 0.2}`;
-                skill.style.zIndex = `${Math.floor(scale * 100)}`;
-            });
-
-            animationFrameId = requestAnimationFrame(updatePositions);
-        };
-        
-        updatePositions();
-
-        return () => {
-            container.removeEventListener('mousemove', handleMouseMove);
-            cancelAnimationFrame(animationFrameId);
-        };
-    }, [allSkills.length]);
+    const skillEntries = Object.entries(portfolioData.skills);
+    const totalSkills = Object.values(portfolioData.skills).flat().length;
 
     return (
-        <section id="skills" className="container mx-auto px-6 py-20">
-            <div className="reveal">
-                <h2 className="text-4xl font-bold mb-12 text-center gradient-text">Technical Skills</h2>
-                <div className="max-w-5xl mx-auto flex flex-col items-center">
-                    <div ref={containerRef} className="relative w-full h-[500px] flex items-center justify-center">
-                        {allSkills.map((skill, index) => (
-                            <div
-                                key={skill}
-                                ref={el => skillsRef.current[index] = el}
-                                className="absolute transition-all duration-100 ease-out flex items-center gap-2 bg-[var(--mid-bg)] px-4 py-2 rounded-full shadow-lg border border-[var(--border-color)] hover:!scale-110 hover:!opacity-100"
-                            >
-                                <span className="w-6 h-6 flex items-center justify-center text-[var(--accent-glow)]">
-                                   {SkillIcons[skill.replace(/\s+/g, '')] ? React.createElement(SkillIcons[skill.replace(/\s+/g, '')]) : null}
-                                </span>
-                                <span className="font-semibold text-[var(--text-primary)] text-sm">{skill}</span>
-                            </div>
-                        ))}
-                    </div>
-                    
-                    <div className="mt-8 text-center">
-                        <button 
-                            onClick={() => setIsModalOpen(true)}
-                            className="flex items-center gap-2 mx-auto bg-gradient-to-r from-[var(--gradient-start)] to-[var(--gradient-end)] text-white font-semibold py-3 px-6 rounded-lg transition-transform hover:scale-105 shadow-lg"
-                        >
-                           <GridIcon /> View All Skills
-                        </button>
-                    </div>
-                    
-                    <div className="mt-20">
-                        <h3 className="text-2xl font-bold text-center text-[var(--text-primary)] mb-6">Professional Abilities</h3>
-                        <div className="flex flex-wrap justify-center items-center gap-x-6 gap-y-3 text-lg text-[var(--text-secondary)]">
-                            {portfolioData.skills["Soft Skills"].map((skill) => (
-                                <span key={skill} className="flex items-center gap-2">
-                                   <CheckCircleIcon />
-                                   {skill}
-                                </span>
-                            ))}
-                        </div>
-                    </div>
-                </div>
+        <section id="skills" className="py-32">
+            <div className="section-container">
+                {/* Section header */}
+                <ScrollReveal direction="blur" className="mb-16">
+                    <p className="text-sm font-mono text-accent mb-3 tracking-wider">02 / SKILLS</p>
+                    <TextReveal as="h2" className="section-heading mb-4">Technical Arsenal</TextReveal>
+                    <p className="section-subtitle">
+                        <Counter to={totalSkills} suffix="+" className="text-accent font-semibold" /> tools and technologies I wield to engineer solutions.
+                    </p>
+                </ScrollReveal>
+
+                {/* Skills grid — 3D tilt cards with stagger */}
+                <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5" stagger={0.12}>
+                    {skillEntries.map(([category, skillList], index) => {
+                        const meta = categoryMeta[category] || categoryMeta["Soft Skills"];
+                        return (
+                            <StaggerItem key={category}>
+                                <TiltCard className="glass-card p-6 group h-full">
+                                    <div className="flex items-center gap-3 mb-6">
+                                        <div className={`w-10 h-10 rounded-xl bg-accent/[0.08] dark:bg-accent/10 border border-accent/[0.15] flex items-center justify-center ${meta.accent}`}>
+                                            {meta.icon}
+                                        </div>
+                                        <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{category}</h3>
+                                    </div>
+
+                                    <StaggerContainer className="flex flex-wrap gap-2" stagger={0.04} delay={0.2}>
+                                        {skillList.slice(0, 8).map((skill, i) => (
+                                            <SkillPill key={skill} skill={skill} index={i} />
+                                        ))}
+                                        {skillList.length > 8 && (
+                                            <StaggerItem>
+                                                <div className="flex items-center px-3 py-1.5 rounded-xl text-xs font-mono text-gray-400 border border-dashed border-gray-300 dark:border-white/[0.06]">
+                                                    +{skillList.length - 8}
+                                                </div>
+                                            </StaggerItem>
+                                        )}
+                                    </StaggerContainer>
+                                </TiltCard>
+                            </StaggerItem>
+                        );
+                    })}
+                </StaggerContainer>
+
+                {/* View All */}
+                <ScrollReveal direction="up" delay={0.3} className="mt-8 flex justify-center">
+                    <button
+                        onClick={() => setIsModalOpen(true)}
+                        className="group inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium text-gray-600 dark:text-gray-400 bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] hover:text-accent hover:border-accent/30 hover:bg-accent/5 dark:hover:bg-accent/[0.06] transition-all duration-300"
+                        id="view-all-skills-btn"
+                    >
+                        <span>View Complete Stack</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="group-hover:translate-x-0.5 transition-transform">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </button>
+                </ScrollReveal>
             </div>
-            {isModalOpen && <SkillModal skills={portfolioData.skills} onClose={() => setIsModalOpen(false)} />}
+
+            <AnimatePresence>
+                {isModalOpen && <SkillModal skills={portfolioData.skills} onClose={() => setIsModalOpen(false)} />}
+            </AnimatePresence>
         </section>
     );
 };
-

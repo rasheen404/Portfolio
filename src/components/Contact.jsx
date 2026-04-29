@@ -1,146 +1,147 @@
 import React, { useState } from "react";
 import { portfolioData } from "../data.jsx";
-import { Section } from "./Section";
-import { SendIcon } from "./Icons";
-
-const CodeSyntax = ({ children, type }) => {
-  const colors = {
-    keyword: "text-pink-400",
-    string: "text-green-300",
-    method: "text-yellow-300",
-    class: "text-blue-400",
-    variable: "text-purple-300",
-    comment: "text-gray-500 italic",
-    default: "text-[var(--text-primary)]",
-  };
-  return <span className={colors[type] || colors.default}>{children}</span>;
-};
+import { SendIcon, MailIcon, LinkedinIcon, GithubIcon, MapPinIcon } from "./Icons";
+import { motion } from 'framer-motion';
+import { ScrollReveal, TextReveal, MagneticWrap, StaggerContainer, StaggerItem } from './AnimationKit';
 
 export const Contact = () => {
-  const [showTerminal, setShowTerminal] = useState(false);
-  const [step, setStep] = useState(0);
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+    const [form, setForm] = useState({ name: "", email: "", message: "" });
+    const [focused, setFocused] = useState(null);
 
-  const questions = [
-    { key: "name", text: "👤 Enter your Name:" },
-    { key: "email", text: "📧 Enter your Email:" },
-    { key: "message", text: "💬 Enter your Message:" },
-  ];
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        window.location.href = `mailto:${portfolioData.email}?subject=Portfolio Contact from ${form.name}&body=Name: ${form.name}%0AEmail: ${form.email}%0A%0AMessage:%0A${form.message}`;
+    };
 
-  return (
-    <Section id="contact" title="Get In Touch">
-      <div
-        className="max-w-3xl mx-auto glass-effect rounded-xl overflow-hidden shadow-lg border-l-4 border-[var(--accent-glow)]"
-        style={{ cursor: "default" }} // 🔹 Disable custom cursor here
-      >
-        {/* IDE-style header */}
-        <div className="bg-gray-800/50 p-3 flex items-center gap-2">
-          <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-          <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-          <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-          <span className="text-sm text-gray-400 ml-auto">ContactMe.java</span>
-        </div>
+    const contactLinks = [
+        { href: `mailto:${portfolioData.email}`, icon: <MailIcon />, label: "Email", value: portfolioData.email },
+        { href: portfolioData.linkedin, icon: <LinkedinIcon />, label: "LinkedIn", value: "Connect on LinkedIn", external: true },
+        { href: portfolioData.github, icon: <GithubIcon />, label: "GitHub", value: "View repositories", external: true },
+    ];
 
-        {/* Code snippet + run button */}
-        <div className="p-6 text-left font-mono text-sm whitespace-pre-wrap overflow-x-auto bg-[var(--mid-bg)]">
-          <code>
-            <CodeSyntax type="comment">package</CodeSyntax>{" "}
-            <CodeSyntax type="class">portfolio.contact</CodeSyntax>;{"\n\n"}
-            <CodeSyntax type="keyword">public class</CodeSyntax>{" "}
-            <CodeSyntax type="class">ContactMe</CodeSyntax> {"{\n\n"}
-            {"    "}
-            <CodeSyntax type="keyword">public static void</CodeSyntax>{" "}
-            <CodeSyntax type="method">main</CodeSyntax>
-            (String[] args) {"{\n"}
-            {"        "}
-            <CodeSyntax type="comment">
-              // Run this program to start a conversation
-            </CodeSyntax>
-            {"\n"}
-            {"        "}System.out.println(
-            <CodeSyntax type="string">"Starting Contact Program..."</CodeSyntax>
-            );{"\n"}
-            {"        "}Contact.run();{"\n"}
-            {"    "}\n\n
-            {"    "}
-            <CodeSyntax type="keyword">static class</CodeSyntax>{" "}
-            <CodeSyntax type="class">Contact</CodeSyntax> {"{\n"}
-            {"        "}
-            <CodeSyntax type="keyword">static void</CodeSyntax>{" "}
-            <CodeSyntax type="method">run</CodeSyntax>() {"{\n"}
-            {"            "}System.out.println(
-            <CodeSyntax type="string">"Awaiting user input..."</CodeSyntax>);
-            {"\n        "}
-            {"}\n    "}
-            {"}\n"}
-            {"}"}
-          </code>
+    return (
+        <section id="contact" className="py-32">
+            <div className="section-container">
+                {/* Section header */}
+                <ScrollReveal direction="blur" className="mb-16">
+                    <p className="text-sm font-mono text-accent mb-3 tracking-wider">05 / CONTACT</p>
+                    <TextReveal as="h2" className="section-heading mb-4">Let's Connect</TextReveal>
+                    <p className="section-subtitle">Have a project in mind or want to discuss opportunities? I'd love to hear from you.</p>
+                </ScrollReveal>
 
-          {/* Run button with label */}
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={() => setShowTerminal(true)}
-              className="flex items-center gap-2 bg-green-600 text-black px-4 py-2 rounded-lg shadow-md 
-                         hover:bg-green-400 transition-colors duration-300"
-              title="Run ContactMe.java"
-            >
-              <span className="w-6 h-6 flex items-center justify-center bg-black/20 rounded-full">
-                ▶
-              </span>
-              <span className="font-semibold">Run Code</span>
-            </button>
-          </div>
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
+                    {/* Contact info — stagger from left */}
+                    <StaggerContainer className="lg:col-span-2 space-y-4" stagger={0.1} delay={0.1}>
+                        {contactLinks.map(({ href, icon, label, value, external }) => (
+                            <StaggerItem key={label} direction="left">
+                                <a
+                                    href={href}
+                                    target={external ? "_blank" : undefined}
+                                    rel={external ? "noopener noreferrer" : undefined}
+                                    className="group glass-card p-4 flex items-center gap-4 hover:border-accent/20 dark:hover:border-accent/10 transition-all duration-300"
+                                    id={`contact-${label.toLowerCase()}`}
+                                >
+                                    <motion.div 
+                                        whileHover={{ scale: 1.15, rotate: 5 }}
+                                        transition={{ type: 'spring', stiffness: 300, damping: 15 }}
+                                        className="w-10 h-10 rounded-xl bg-accent/[0.08] dark:bg-accent/10 border border-accent/[0.15] flex items-center justify-center text-accent"
+                                    >
+                                        {icon}
+                                    </motion.div>
+                                    <div className="flex-grow min-w-0">
+                                        <p className="text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wider">{label}</p>
+                                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-white transition-colors truncate">{value}</p>
+                                    </div>
+                                    <motion.svg 
+                                        width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
+                                        className="text-gray-300 dark:text-gray-600 group-hover:text-accent transition-colors"
+                                        whileHover={{ x: 4 }}
+                                    >
+                                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                                    </motion.svg>
+                                </a>
+                            </StaggerItem>
+                        ))}
 
-          {/* Fake terminal */}
-          {showTerminal && (
-            <div className="mt-6">
-              <p className="text-sm text-gray-400 mb-2">Output:</p>
-              <div className="bg-black text-green-400 font-mono p-4 rounded-lg overflow-hidden">
-                {questions.slice(0, step + 1).map((q, idx) => (
-                  <div key={idx} className="mb-3">
-                    <p>{q.text}</p>
-                    {step === idx && (
-                      <input
-                        type="text"
-                        value={form[q.key]}
-                        onChange={(e) =>
-                          setForm({ ...form, [q.key]: e.target.value })
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && form[q.key].trim()) {
-                            setStep(step + 1);
-                          }
-                        }}
-                        className="bg-black border-b border-green-500 text-green-300 outline-none w-full"
-                        autoFocus
-                      />
-                    )}
-                    {form[q.key] && step > idx && (
-                      <p className="text-green-300">{form[q.key]}</p>
-                    )}
-                  </div>
-                ))}
+                        <StaggerItem direction="left">
+                            <div className="glass-card p-4 flex items-center gap-4">
+                                <div className="w-10 h-10 rounded-xl bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] flex items-center justify-center text-gray-400">
+                                    <MapPinIcon />
+                                </div>
+                                <div>
+                                    <p className="text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wider">Location</p>
+                                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">{portfolioData.location}</p>
+                                </div>
+                            </div>
+                        </StaggerItem>
+                    </StaggerContainer>
 
-                {/* Show Send button when done */}
-                {step === questions.length && (
-                  <button
-                    onClick={() =>
-                      (window.location.href = `mailto:${
-                        portfolioData.email
-                      }?subject=Portfolio Contact&body=Name: ${form.name}%0AEmail: ${
-                        form.email
-                      }%0AMessage: ${form.message}`)
-                    }
-                    className="mt-4 bg-green-600 px-4 py-2 rounded-lg text-black font-bold hover:bg-green-400 flex items-center gap-2"
-                  >
-                    Send Message <SendIcon />
-                  </button>
-                )}
-              </div>
+                    {/* Contact form — reveal from right */}
+                    <ScrollReveal direction="right" delay={0.2} className="lg:col-span-3">
+                        <div className="glass-card p-6 md:p-8">
+                            <form onSubmit={handleSubmit} className="space-y-5">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                                    {[
+                                        { key: 'name', label: 'Name', type: 'text', placeholder: 'Your name' },
+                                        { key: 'email', label: 'Email', type: 'email', placeholder: 'your@email.com' },
+                                    ].map(({ key, label, type, placeholder }) => (
+                                        <div key={key} className="relative">
+                                            <label className="block text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">{label}</label>
+                                            <motion.input
+                                                whileFocus={{ scale: 1.01 }}
+                                                type={type}
+                                                value={form[key]}
+                                                onChange={(e) => setForm({ ...form, [key]: e.target.value })}
+                                                onFocus={() => setFocused(key)}
+                                                onBlur={() => setFocused(null)}
+                                                placeholder={placeholder}
+                                                required
+                                                className={`w-full px-4 py-3 rounded-xl text-sm bg-gray-50 dark:bg-white/[0.03] border transition-all duration-300 outline-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 ${
+                                                    focused === key 
+                                                        ? 'border-accent/50 ring-2 ring-accent/10 bg-white dark:bg-white/[0.05]' 
+                                                        : 'border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/[0.1]'
+                                                }`}
+                                                id={`contact-input-${key}`}
+                                            />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                <div className="relative">
+                                    <label className="block text-xs font-mono text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-2">Message</label>
+                                    <motion.textarea
+                                        whileFocus={{ scale: 1.01 }}
+                                        value={form.message}
+                                        onChange={(e) => setForm({ ...form, message: e.target.value })}
+                                        onFocus={() => setFocused('message')}
+                                        onBlur={() => setFocused(null)}
+                                        placeholder="Tell me about your project..."
+                                        required
+                                        rows={5}
+                                        className={`w-full px-4 py-3 rounded-xl text-sm bg-gray-50 dark:bg-white/[0.03] border transition-all duration-300 outline-none resize-none text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-600 ${
+                                            focused === 'message' 
+                                                ? 'border-accent/50 ring-2 ring-accent/10 bg-white dark:bg-white/[0.05]' 
+                                                : 'border-gray-200 dark:border-white/[0.06] hover:border-gray-300 dark:hover:border-white/[0.1]'
+                                        }`}
+                                        id="contact-input-message"
+                                    />
+                                </div>
+
+                                <MagneticWrap strength={0.1}>
+                                    <button
+                                        type="submit"
+                                        className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3 rounded-xl bg-accent text-white font-medium text-sm hover:bg-accent-dark transition-all duration-300 shadow-glow-sm hover:shadow-glow"
+                                        id="contact-submit-btn"
+                                    >
+                                        <span>Send Message</span>
+                                        <SendIcon />
+                                    </button>
+                                </MagneticWrap>
+                            </form>
+                        </div>
+                    </ScrollReveal>
+                </div>
             </div>
-          )}
-        </div>
-      </div>
-    </Section>
-  );
+        </section>
+    );
 };

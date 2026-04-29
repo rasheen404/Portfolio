@@ -1,75 +1,143 @@
-import React, { useRef, useEffect } from 'react';
+import React from 'react';
 import { portfolioData } from '../data.jsx';
-import { Section } from './Section';
+import { motion, useScroll, useTransform } from 'framer-motion';
+import { ScrollReveal, TextReveal, StaggerContainer, StaggerItem, Counter } from './AnimationKit';
+import { useRef } from 'react';
 
-export const Experience = () => {
-    const timelineRef = useRef(null);
-    const lineRef = useRef(null);
-    
-    useEffect(() => {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting){
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, { threshold: 0.5 });
-        
-        const elements = document.querySelectorAll('.timeline-item, .timeline-marker');
-        elements.forEach(el => observer.observe(el));
-        
-        const handleScroll = () => {
-            const timeline = timelineRef.current;
-            const line = lineRef.current;
-            if(!timeline || !line) return;
-
-            const { top, height } = timeline.getBoundingClientRect();
-            const scrollPercent = Math.max(0, Math.min(1, (window.innerHeight - top) / (window.innerHeight + height)));
-            
-            line.style.height = `${scrollPercent * 100}%`;
-        };
-        
-        window.addEventListener('scroll', handleScroll, { passive: true });
-
-        return () => {
-            elements.forEach(el => observer.unobserve(el));
-            window.removeEventListener('scroll', handleScroll);
-        };
-    }, []);
+const TimelineCard = ({ item, index, isWork }) => {
+    const isLeft = index % 2 === 0;
+    const cardRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: cardRef,
+        offset: ["start end", "center center"],
+    });
+    const lineHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
 
     return (
-    <Section id="experience" title="My Journey">
-        <div ref={timelineRef} className="container mx-auto w-full h-full">
-            <div className="relative wrap overflow-hidden p-10 h-full">
-                <div className="absolute left-1/2 -ml-px w-1 h-full bg-[var(--border-color)]">
-                    <div ref={lineRef} className="absolute top-0 left-0 w-full bg-[var(--accent-glow)]" style={{height: '0%'}}></div>
-                </div>
-                
-                {portfolioData.journey.map((item, index) => (
-                    <div key={index} className={`mb-8 flex justify-between items-center w-full ${index % 2 !== 0 ? 'flex-row-reverse' : ''}`}>
-                        <div className="order-1 w-5/12"></div>
-                        <div className="z-20 flex items-center order-1 bg-[var(--dark-bg)] shadow-xl w-12 h-12 rounded-full timeline-marker border-4 border-[var(--accent-glow)]">
-                            <div className="mx-auto text-white text-[var(--accent-glow)]">{item.icon}</div>
-                        </div>
-                        <div className={`order-1 glass-effect rounded-lg shadow-xl w-5/12 px-6 py-4 reveal ${index % 2 !== 0 ? 'slide-in-left' : 'slide-in-right'}`}>
-                            <h3 className="mb-2 font-bold text-[var(--text-primary)] text-xl">{item.title}</h3>
-                            <p className="text-md leading-snug tracking-wide text-[var(--text-secondary)] mb-2">{item.institution}</p>
-                            <p className="text-sm text-[var(--text-secondary)]/80 mb-4">{item.period}</p>
-                            {item.points && (
-                                <ul className="list-disc list-inside space-y-1 text-[var(--text-secondary)] text-sm">
-                                    {item.points.map((point, i) => <li key={i}>{point}</li>)}
-                                </ul>
-                            )}
+        <motion.div
+            ref={cardRef}
+            initial={{ opacity: 0, x: isLeft ? -60 : 60 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className={`relative flex flex-col md:flex-row items-start ${
+                isLeft ? 'md:flex-row' : 'md:flex-row-reverse'
+            }`}
+        >
+            {/* Timeline dot with scroll-linked pulse */}
+            <div className="absolute left-0 md:left-1/2 -translate-x-1/2 z-10 mt-2">
+                <motion.div 
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.2, type: 'spring', stiffness: 300, damping: 15 }}
+                    className="relative"
+                >
+                    <div className={`w-3 h-3 rounded-full ${isWork ? 'bg-accent shadow-glow-sm' : 'bg-gray-300 dark:bg-gray-600'}`} />
+                    {isWork && <div className="absolute inset-0 rounded-full bg-accent/30 animate-ping" style={{ animationDuration: '3s' }} />}
+                </motion.div>
+            </div>
+
+            {/* Card */}
+            <div className={`ml-8 md:ml-0 md:w-[calc(50%-2rem)] ${isLeft ? 'md:pr-0 md:mr-auto' : 'md:pl-0 md:ml-auto'}`}>
+                <motion.div 
+                    whileHover={{ y: -4, transition: { duration: 0.3 } }}
+                    className="glass-card p-6 group hover:border-accent/20 dark:hover:border-accent/10 transition-all duration-500"
+                >
+                    {/* Header row */}
+                    <div className="flex items-start gap-4 mb-4">
+                        <motion.div 
+                            whileHover={{ rotate: 5, scale: 1.1 }}
+                            transition={{ type: 'spring', stiffness: 300 }}
+                            className={`flex-shrink-0 w-10 h-10 rounded-xl flex items-center justify-center border transition-all duration-300 ${
+                                isWork 
+                                    ? 'bg-accent/[0.08] dark:bg-accent/10 border-accent/[0.15] text-accent' 
+                                    : 'bg-gray-100 dark:bg-white/[0.04] border-gray-200 dark:border-white/[0.06] text-gray-400'
+                            }`}
+                        >
+                            {item.icon}
+                        </motion.div>
+                        <div className="flex-grow min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 dark:text-white leading-tight">{item.title}</h3>
+                            <p className="text-sm text-accent font-medium mt-0.5">{item.institution}</p>
                         </div>
                     </div>
-                ))}
-            </div>
-            <style>{`
-                .slide-in-left { transform: translateX(-50px); opacity: 0; }
-                .slide-in-right { transform: translateX(50px); opacity: 0; }
-                .reveal.visible .slide-in-left, .reveal.visible .slide-in-right { transform: translateX(0); opacity: 1; }
-            `}</style>
-        </div>
-    </Section>
-)};
 
+                    {/* Period badge */}
+                    <div className="mb-4">
+                        <span className="text-xs font-mono text-gray-400 dark:text-gray-500 bg-gray-100 dark:bg-white/[0.03] px-2.5 py-1 rounded-md border border-gray-200/50 dark:border-white/[0.04]">
+                            {item.period}
+                        </span>
+                    </div>
+
+                    {/* Points — stagger in on view */}
+                    {item.points && (
+                        <ul className="space-y-2.5">
+                            {item.points.map((point, i) => (
+                                <motion.li 
+                                    key={i} 
+                                    initial={{ opacity: 0, x: -10 }}
+                                    whileInView={{ opacity: 1, x: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ delay: 0.3 + i * 0.1, duration: 0.5 }}
+                                    className="flex items-start gap-3 text-sm text-gray-500 dark:text-gray-400 leading-relaxed group-hover:text-gray-600 dark:group-hover:text-gray-300 transition-colors"
+                                >
+                                    <span className="flex-shrink-0 w-1 h-1 rounded-full bg-accent/50 mt-2" />
+                                    <span>{point}</span>
+                                </motion.li>
+                            ))}
+                        </ul>
+                    )}
+                </motion.div>
+            </div>
+        </motion.div>
+    );
+};
+
+export const Experience = () => {
+    const sectionRef = useRef(null);
+    const { scrollYProgress } = useScroll({
+        target: sectionRef,
+        offset: ["start end", "end end"],
+    });
+    // Vertical line grows as you scroll through the section
+    const lineHeight = useTransform(scrollYProgress, [0, 1], ['0%', '100%']);
+
+    return (
+        <section id="experience" className="py-32" ref={sectionRef}>
+            <div className="section-container">
+                {/* Section header */}
+                <ScrollReveal direction="blur" className="mb-16">
+                    <p className="text-sm font-mono text-accent mb-3 tracking-wider">03 / JOURNEY</p>
+                    <TextReveal as="h2" className="section-heading mb-4">Experience & Education</TextReveal>
+                    <p className="section-subtitle">
+                        <Counter to={2} suffix="+" className="text-accent font-semibold" /> years of professional growth and academic foundation.
+                    </p>
+                </ScrollReveal>
+
+                {/* Timeline */}
+                <div className="relative">
+                    {/* Static vertical line (background track) */}
+                    <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-px bg-gray-200/50 dark:bg-white/[0.03] md:-translate-x-px" />
+                    
+                    {/* Animated vertical line (progress fill) */}
+                    <motion.div 
+                        className="absolute left-0 md:left-1/2 top-0 w-px bg-gradient-to-b from-accent to-accent/20 md:-translate-x-px origin-top"
+                        style={{ height: lineHeight }}
+                    />
+
+                    <div className="space-y-16">
+                        {portfolioData.journey.map((item, index) => (
+                            <TimelineCard 
+                                key={index}
+                                item={item}
+                                index={index}
+                                isWork={item.type === 'work'}
+                            />
+                        ))}
+                    </div>
+                </div>
+            </div>
+        </section>
+    );
+};
