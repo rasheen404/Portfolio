@@ -84,16 +84,16 @@ export const Hero = () => {
                 <div className="w-full max-w-7xl relative">
                     <h1 className="sr-only">{portfolioData.name} - Java Full-Stack Engineer</h1>
                     
-                    <div className="overflow-hidden mb-[-4vw]">
-                        <div className="text-[12vw] font-black uppercase leading-none tracking-tighter text-transparent ml-12 md:ml-24" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.2)' }}>
+                    <div className="overflow-hidden mb-[-2vw] md:mb-[-4vw]">
+                        <div className="text-[12vw] sm:text-[11vw] md:text-[10vw] font-black uppercase leading-none tracking-tighter text-transparent ml-4 md:ml-24" style={{ WebkitTextStroke: '1px rgba(255,255,255,0.2)' }}>
                             {splitText("MOHAMMED")}
                         </div>
                     </div>
                     
                     <div className="hero-line w-full h-px bg-white/20 my-4 origin-left" />
                     
-                    <div className="overflow-hidden flex justify-end mt-[-4vw]">
-                        <div className="text-[14vw] font-black uppercase leading-none tracking-tighter text-white mr-12 md:mr-24 drop-shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                    <div className="overflow-hidden flex justify-end mt-[-2vw] md:mt-[-4vw]">
+                        <div className="text-[14vw] sm:text-[13vw] md:text-[12vw] font-black uppercase leading-none tracking-tighter text-white mr-4 md:mr-24 drop-shadow-[0_0_50px_rgba(255,255,255,0.1)]">
                             {splitText("RASHEEN")}
                         </div>
                     </div>
