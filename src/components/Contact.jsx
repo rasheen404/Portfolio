@@ -1,146 +1,125 @@
 import React, { useState } from "react";
 import { portfolioData } from "../data.jsx";
-import { Section } from "./Section";
-import { SendIcon } from "./Icons";
-
-const CodeSyntax = ({ children, type }) => {
-  const colors = {
-    keyword: "text-pink-400",
-    string: "text-green-300",
-    method: "text-yellow-300",
-    class: "text-blue-400",
-    variable: "text-purple-300",
-    comment: "text-gray-500 italic",
-    default: "text-[var(--text-primary)]",
-  };
-  return <span className={colors[type] || colors.default}>{children}</span>;
-};
+import { motion } from 'framer-motion';
 
 export const Contact = () => {
-  const [showTerminal, setShowTerminal] = useState(false);
-  const [step, setStep] = useState(0);
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
+    const [form, setForm] = useState({ name: "", email: "", message: "" });
+    const [focused, setFocused] = useState(null);
 
-  const questions = [
-    { key: "name", text: "👤 Enter your Name:" },
-    { key: "email", text: "📧 Enter your Email:" },
-    { key: "message", text: "💬 Enter your Message:" },
-  ];
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        window.location.href = `mailto:${portfolioData.email}?subject=Portfolio Contact from ${form.name}&body=Name: ${form.name}%0AEmail: ${form.email}%0A%0AMessage:%0A${form.message}`;
+    };
 
-  return (
-    <Section id="contact" title="Get In Touch">
-      <div
-        className="max-w-3xl mx-auto glass-effect rounded-xl overflow-hidden shadow-lg border-l-4 border-[var(--accent-glow)]"
-        style={{ cursor: "default" }} // 🔹 Disable custom cursor here
-      >
-        {/* IDE-style header */}
-        <div className="bg-gray-800/50 p-3 flex items-center gap-2">
-          <span className="w-3 h-3 bg-red-500 rounded-full"></span>
-          <span className="w-3 h-3 bg-yellow-500 rounded-full"></span>
-          <span className="w-3 h-3 bg-green-500 rounded-full"></span>
-          <span className="text-sm text-gray-400 ml-auto">ContactMe.java</span>
-        </div>
+    return (
+        <section id="contact" className="py-32 relative z-10 bg-[#000000] min-h-screen flex items-center justify-center overflow-hidden">
+            
+            <div className="section-container w-full max-w-6xl mx-auto relative z-10 px-4">
+                
+                {/* The "Senior UI" Bento Card */}
+                <div className="relative w-full rounded-[2.5rem] md:rounded-[4rem] bg-[#030303] border border-white/[0.05] p-2 md:p-4 shadow-2xl overflow-hidden group">
+                    
+                    {/* Confined Soft Glow inside the card */}
+                    <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/10 via-transparent to-transparent opacity-50 blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3 transition-opacity duration-1000 group-hover:opacity-100" />
+                    
+                    <div className="relative z-10 grid grid-cols-1 lg:grid-cols-5 gap-4 md:gap-8 bg-black/40 rounded-[2rem] md:rounded-[3.5rem] border border-white/[0.02] p-8 md:p-16 lg:p-20 overflow-hidden backdrop-blur-xl">
+                        
+                        {/* Left Side: Brand and Info (Spans 2 cols) */}
+                        <div className="lg:col-span-2 flex flex-col justify-between relative z-10">
+                            <div>
+                                <div className="w-16 h-16 rounded-2xl bg-white/[0.03] border border-white/[0.05] flex items-center justify-center mb-12 shadow-inner">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-accent"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                                </div>
+                                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white mb-6">
+                                    Let's start a <br/>
+                                    <span className="text-gray-500">project together</span>
+                                </h2>
+                                <p className="text-base text-gray-400 font-light max-w-sm leading-relaxed mb-12">
+                                    Fill out the form and I'll get back to you within 24 hours. Let's engineer something remarkable.
+                                </p>
+                            </div>
 
-        {/* Code snippet + run button */}
-        <div className="p-6 text-left font-mono text-sm whitespace-pre-wrap overflow-x-auto bg-[var(--mid-bg)]">
-          <code>
-            <CodeSyntax type="comment">package</CodeSyntax>{" "}
-            <CodeSyntax type="class">portfolio.contact</CodeSyntax>;{"\n\n"}
-            <CodeSyntax type="keyword">public class</CodeSyntax>{" "}
-            <CodeSyntax type="class">ContactMe</CodeSyntax> {"{\n\n"}
-            {"    "}
-            <CodeSyntax type="keyword">public static void</CodeSyntax>{" "}
-            <CodeSyntax type="method">main</CodeSyntax>
-            (String[] args) {"{\n"}
-            {"        "}
-            <CodeSyntax type="comment">
-              // Run this program to start a conversation
-            </CodeSyntax>
-            {"\n"}
-            {"        "}System.out.println(
-            <CodeSyntax type="string">"Starting Contact Program..."</CodeSyntax>
-            );{"\n"}
-            {"        "}Contact.run();{"\n"}
-            {"    "}\n\n
-            {"    "}
-            <CodeSyntax type="keyword">static class</CodeSyntax>{" "}
-            <CodeSyntax type="class">Contact</CodeSyntax> {"{\n"}
-            {"        "}
-            <CodeSyntax type="keyword">static void</CodeSyntax>{" "}
-            <CodeSyntax type="method">run</CodeSyntax>() {"{\n"}
-            {"            "}System.out.println(
-            <CodeSyntax type="string">"Awaiting user input..."</CodeSyntax>);
-            {"\n        "}
-            {"}\n    "}
-            {"}\n"}
-            {"}"}
-          </code>
+                            <div className="space-y-6">
+                                <a href={`mailto:${portfolioData.email}`} aria-label="Send email to Mohammed Rasheen" className="flex items-center gap-4 text-gray-400 hover:text-white transition-colors group/link w-fit">
+                                    <div className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.05] flex items-center justify-center group-hover/link:border-accent/30 group-hover/link:bg-accent/10 transition-colors">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/></svg>
+                                    </div>
+                                    <span className="font-light">{portfolioData.email}</span>
+                                </a>
+                                <div className="flex gap-4">
+                                    <a href={portfolioData.linkedin} target="_blank" rel="noopener noreferrer" aria-label="Visit LinkedIn Profile" className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-gray-400 hover:text-white hover:border-accent/30 hover:bg-accent/10 transition-colors">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                                    </a>
+                                    <a href={portfolioData.github} target="_blank" rel="noopener noreferrer" aria-label="Visit GitHub Profile" className="w-10 h-10 rounded-full bg-white/[0.03] border border-white/[0.05] flex items-center justify-center text-gray-400 hover:text-white hover:border-accent/30 hover:bg-accent/10 transition-colors">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
 
-          {/* Run button with label */}
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={() => setShowTerminal(true)}
-              className="flex items-center gap-2 bg-green-600 text-black px-4 py-2 rounded-lg shadow-md 
-                         hover:bg-green-400 transition-colors duration-300"
-              title="Run ContactMe.java"
-            >
-              <span className="w-6 h-6 flex items-center justify-center bg-black/20 rounded-full">
-                ▶
-              </span>
-              <span className="font-semibold">Run Code</span>
-            </button>
-          </div>
+                        {/* Right Side: The Premium Form (Spans 3 cols) */}
+                        <div className="lg:col-span-3 mt-16 lg:mt-0 relative z-10">
+                            <form onSubmit={handleSubmit} className="space-y-6">
+                                
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-medium text-gray-500 pl-1">Name</label>
+                                        <input
+                                            type="text"
+                                            value={form.name}
+                                            onChange={(e) => setForm({ ...form, name: e.target.value })}
+                                            onFocus={() => setFocused('name')}
+                                            onBlur={() => setFocused(null)}
+                                            required
+                                            placeholder="John Doe"
+                                            className={`w-full px-5 py-4 rounded-xl bg-[#0A0A0A] border text-sm text-white placeholder-gray-600 outline-none transition-all duration-300 ${focused === 'name' ? 'border-accent shadow-[0_0_15px_rgba(0,229,255,0.1)]' : 'border-white/[0.05] hover:border-white/[0.1]'}`}
+                                        />
+                                    </div>
 
-          {/* Fake terminal */}
-          {showTerminal && (
-            <div className="mt-6">
-              <p className="text-sm text-gray-400 mb-2">Output:</p>
-              <div className="bg-black text-green-400 font-mono p-4 rounded-lg overflow-hidden">
-                {questions.slice(0, step + 1).map((q, idx) => (
-                  <div key={idx} className="mb-3">
-                    <p>{q.text}</p>
-                    {step === idx && (
-                      <input
-                        type="text"
-                        value={form[q.key]}
-                        onChange={(e) =>
-                          setForm({ ...form, [q.key]: e.target.value })
-                        }
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter" && form[q.key].trim()) {
-                            setStep(step + 1);
-                          }
-                        }}
-                        className="bg-black border-b border-green-500 text-green-300 outline-none w-full"
-                        autoFocus
-                      />
-                    )}
-                    {form[q.key] && step > idx && (
-                      <p className="text-green-300">{form[q.key]}</p>
-                    )}
-                  </div>
-                ))}
+                                    <div className="space-y-2">
+                                        <label className="text-xs font-medium text-gray-500 pl-1">Email</label>
+                                        <input
+                                            type="email"
+                                            value={form.email}
+                                            onChange={(e) => setForm({ ...form, email: e.target.value })}
+                                            onFocus={() => setFocused('email')}
+                                            onBlur={() => setFocused(null)}
+                                            required
+                                            placeholder="john@example.com"
+                                            className={`w-full px-5 py-4 rounded-xl bg-[#0A0A0A] border text-sm text-white placeholder-gray-600 outline-none transition-all duration-300 ${focused === 'email' ? 'border-accent shadow-[0_0_15px_rgba(0,229,255,0.1)]' : 'border-white/[0.05] hover:border-white/[0.1]'}`}
+                                        />
+                                    </div>
+                                </div>
 
-                {/* Show Send button when done */}
-                {step === questions.length && (
-                  <button
-                    onClick={() =>
-                      (window.location.href = `mailto:${
-                        portfolioData.email
-                      }?subject=Portfolio Contact&body=Name: ${form.name}%0AEmail: ${
-                        form.email
-                      }%0AMessage: ${form.message}`)
-                    }
-                    className="mt-4 bg-green-600 px-4 py-2 rounded-lg text-black font-bold hover:bg-green-400 flex items-center gap-2"
-                  >
-                    Send Message <SendIcon />
-                  </button>
-                )}
-              </div>
+                                <div className="space-y-2">
+                                    <label className="text-xs font-medium text-gray-500 pl-1">Message</label>
+                                    <textarea
+                                        value={form.message}
+                                        onChange={(e) => setForm({ ...form, message: e.target.value })}
+                                        onFocus={() => setFocused('message')}
+                                        onBlur={() => setFocused(null)}
+                                        required
+                                        rows={5}
+                                        placeholder="Tell me about your project..."
+                                        className={`w-full px-5 py-4 rounded-xl bg-[#0A0A0A] border text-sm text-white placeholder-gray-600 outline-none resize-none transition-all duration-300 ${focused === 'message' ? 'border-accent shadow-[0_0_15px_rgba(0,229,255,0.1)]' : 'border-white/[0.05] hover:border-white/[0.1]'}`}
+                                    />
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    className="w-full py-4 mt-4 rounded-xl bg-white text-black font-semibold text-sm hover:bg-accent transition-colors duration-300 flex items-center justify-center gap-2 group"
+                                >
+                                    Send Message
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                                </button>
+                                
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+
             </div>
-          )}
-        </div>
-      </div>
-    </Section>
-  );
+        </section>
+    );
 };
