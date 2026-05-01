@@ -1,153 +1,119 @@
-import React, { useState, useEffect } from 'react';
-import { MenuIcon, XIcon, SunIcon, MoonIcon } from './Icons';
-import { motion, AnimatePresence, useMotionValueEvent, useScroll } from 'framer-motion';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { portfolioData } from '../data.jsx';
+import { Home, Code2, Briefcase, Layers, Mail, Download } from 'lucide-react';
 
-export const Header = ({ scrollY, theme, toggleTheme }) => {
-    const [isOpen, setIsOpen] = useState(false);
-    const [scrollProgress, setScrollProgress] = useState(0);
-    const navLinks = ["about", "skills", "experience", "projects", "contact"];
-    const isScrolled = scrollY > 50;
+export const Header = () => {
+    const navLinks = [
+        { id: "about", label: "about", icon: Home },
+        { id: "skills", label: "skills", icon: Code2 },
+        { id: "projects", label: "projects", icon: Layers },
+        { id: "experience", label: "experience", icon: Briefcase },
+        { id: "contact", label: "contact", icon: Mail },
+    ];
+    const [hovered, setHovered] = useState(null);
+    const [downloadState, setDownloadState] = useState('idle'); // 'idle' | 'loading' | 'success' | 'error'
 
-    const { scrollYProgress } = useScroll();
-
-    useMotionValueEvent(scrollYProgress, "change", (latest) => {
-        setScrollProgress(latest);
-    });
-
-    const isDark = theme === 'dark';
+    const handleDownload = async (e) => {
+        e.preventDefault();
+        if (downloadState === 'loading') return;
+        
+        setDownloadState('loading');
+        
+        try {
+            const response = await fetch(portfolioData.cv_url);
+            if (!response.ok) throw new Error("Download failed");
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Mohammed_Rasheen_Resume.pdf";
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            setDownloadState('success');
+        } catch (error) {
+            console.error(error);
+            setDownloadState('error');
+        } finally {
+            setTimeout(() => setDownloadState('idle'), 3000);
+        }
+    };
 
     return (
-        <motion.header 
-            initial={{ y: -100, opacity: 0 }}
+        <motion.div 
+            initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed top-0 w-full z-50"
+            transition={{ duration: 0.8, delay: 1.5, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-[100] pointer-events-auto w-[90%] md:w-auto"
         >
-            {/* Scroll progress bar */}
-            <motion.div 
-                className="absolute top-0 left-0 right-0 h-[1px] bg-accent origin-left z-50"
-                style={{ scaleX: scrollProgress }}
-            />
-
-            <div className={`transition-all duration-500 ${isScrolled ? 'py-3' : 'py-6'}`}>
-                <div className={`mx-auto px-4 transition-all duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] ${
-                    isScrolled ? 'max-w-3xl' : 'max-w-6xl'
-                }`}>
-                    <div className={`flex items-center justify-between px-6 py-3 rounded-2xl transition-all duration-500 ${
-                        isScrolled 
-                            ? 'bg-white/70 dark:bg-dark-800/70 border border-gray-200/50 dark:border-white/[0.04] backdrop-blur-xl shadow-lg shadow-black/[0.03] dark:shadow-black/[0.2]' 
-                            : 'bg-transparent'
-                    }`}>
-                        
-                        {/* Logo */}
-                        <a href="#about" className="flex items-center gap-3 group" id="header-logo">
-                            <div className="w-8 h-8 rounded-lg bg-accent/10 border border-accent/20 flex items-center justify-center group-hover:bg-accent/20 group-hover:border-accent/30 transition-all duration-300">
-                                <span className="text-sm font-bold text-accent font-mono">R</span>
-                            </div>
-                            <span className="text-sm font-semibold text-gray-900 dark:text-white tracking-wide hidden sm:block">
-                                rasheen
-                            </span>
-                        </a>
-                        
-                        {/* Desktop Nav */}
-                        <nav className="hidden md:flex items-center gap-1" id="desktop-nav">
-                            {navLinks.map((link, i) => (
-                                <motion.a 
-                                    key={link} 
-                                    href={`#${link}`}
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.3 + (0.05 * i), duration: 0.5 }}
-                                    className="px-3 py-2 text-[13px] font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors duration-200 rounded-lg hover:bg-gray-100 dark:hover:bg-white/[0.04] capitalize"
-                                >
-                                    {link}
-                                </motion.a>
-                            ))}
-                            
-                            <div className="w-px h-5 bg-gray-200 dark:bg-white/10 mx-2" />
-                            
-                            {/* Theme Toggle */}
-                            <button
-                                onClick={toggleTheme}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-white/[0.08] transition-all duration-200"
-                                aria-label="Toggle theme"
-                                id="theme-toggle-btn"
+            <div className="flex items-center justify-between md:justify-center gap-1 md:gap-2 px-2 py-2 rounded-full bg-[#050505]/80 border border-white/10 backdrop-blur-2xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.8)]">
+                
+                {/* Desktop & Mobile Combined Nav */}
+                <nav className="flex items-center gap-1 md:gap-1" onMouseLeave={() => setHovered(null)}>
+                    {navLinks.map((link) => {
+                        const Icon = link.icon;
+                        return (
+                            <a 
+                                key={link.id} 
+                                href={`#${link.id}`}
+                                onMouseEnter={() => setHovered(link.id)}
+                                aria-label={`Navigate to ${link.label} section`}
+                                className="relative p-3 md:px-5 md:py-2.5 text-gray-400 hover:text-white transition-colors duration-300 rounded-full flex items-center justify-center group"
                             >
-                                <AnimatePresence mode="wait" initial={false}>
-                                    {isDark ? (
-                                        <motion.div
-                                            key="moon"
-                                            initial={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                                            animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                                            exit={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
-                                            <MoonIcon />
-                                        </motion.div>
-                                    ) : (
-                                        <motion.div
-                                            key="sun"
-                                            initial={{ rotate: 90, opacity: 0, scale: 0.5 }}
-                                            animate={{ rotate: 0, opacity: 1, scale: 1 }}
-                                            exit={{ rotate: -90, opacity: 0, scale: 0.5 }}
-                                            transition={{ duration: 0.2 }}
-                                        >
-                                            <SunIcon />
-                                        </motion.div>
-                                    )}
-                                </AnimatePresence>
-                            </button>
-                        </nav>
-
-                        {/* Mobile controls */}
-                        <div className="md:hidden flex items-center gap-2">
-                            <button
-                                onClick={toggleTheme}
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] text-gray-600 dark:text-gray-400 transition-all"
-                                aria-label="Toggle theme"
-                            >
-                                {isDark ? <MoonIcon /> : <SunIcon />}
-                            </button>
-                            <button 
-                                onClick={() => setIsOpen(!isOpen)} 
-                                className="w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] text-gray-600 dark:text-gray-400 transition-all"
-                                id="mobile-menu-btn"
-                            >
-                                {isOpen ? <XIcon /> : <MenuIcon />}
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Mobile menu */}
-            <AnimatePresence>
-                {isOpen && (
-                    <motion.div 
-                        initial={{ opacity: 0, y: -10, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        exit={{ opacity: 0, y: -10, scale: 0.98 }}
-                        transition={{ duration: 0.2, ease: "easeOut" }}
-                        className="md:hidden absolute top-full left-4 right-4 mt-2 p-2 rounded-2xl bg-white/90 dark:bg-dark-800/90 border border-gray-200/80 dark:border-white/[0.06] backdrop-blur-xl shadow-xl"
+                                <span className="relative z-10 hidden md:block text-xs font-mono font-medium uppercase tracking-widest">{link.label}</span>
+                                <span className="relative z-10 md:hidden"><Icon size={18} /></span>
+                                
+                                {hovered === link.id && (
+                                    <motion.div
+                                        layoutId="navHover"
+                                        className="absolute inset-0 bg-white/10 rounded-full z-0 hidden md:block"
+                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                    />
+                                )}
+                            </a>
+                        );
+                    })}
+                    
+                    <div className="w-px h-6 bg-white/20 mx-1 md:mx-2" />
+                    
+                    <button 
+                        onClick={handleDownload}
+                        className={`flex items-center justify-center gap-2 p-3 md:px-6 md:py-2.5 ml-1 rounded-full transition-all duration-500 overflow-hidden relative
+                            ${downloadState === 'idle' ? 'bg-accent text-black hover:bg-white shadow-[0_0_20px_rgba(0,229,255,0.2)] hover:shadow-[0_0_30px_rgba(255,255,255,0.4)]' : ''}
+                            ${downloadState === 'loading' ? 'bg-white/20 text-white cursor-wait w-[42px] md:w-[150px]' : ''}
+                            ${downloadState === 'success' ? 'bg-green-500 text-white shadow-[0_0_30px_rgba(34,197,94,0.4)]' : ''}
+                            ${downloadState === 'error' ? 'bg-red-500 text-white shadow-[0_0_30px_rgba(239,68,68,0.4)]' : ''}
+                        `}
                     >
-                        <nav className="flex flex-col" id="mobile-nav">
-                            {navLinks.map((link, i) => (
-                                <motion.a 
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: i * 0.03 }}
-                                    key={link} 
-                                    href={`#${link}`} 
-                                    onClick={() => setIsOpen(false)} 
-                                    className="px-4 py-3 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/[0.04] rounded-xl transition-all capitalize"
-                                >
-                                    {link}
-                                </motion.a>
-                            ))}
-                        </nav>
-                    </motion.div>
-                )}
-            </AnimatePresence>
-        </motion.header>
+                        {downloadState === 'idle' && (
+                            <>
+                                <span className="hidden md:block text-xs font-bold font-mono tracking-widest">DOWNLOAD CV</span>
+                                <Download size={18} className="md:hidden" />
+                                <svg className="hidden md:block" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            </>
+                        )}
+                        {downloadState === 'loading' && (
+                            <svg className="animate-spin" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                        )}
+                        {downloadState === 'success' && (
+                            <>
+                                <span className="hidden md:block text-xs font-bold font-mono tracking-widest">DOWNLOADED</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            </>
+                        )}
+                        {downloadState === 'error' && (
+                            <>
+                                <span className="hidden md:block text-xs font-bold font-mono tracking-widest">FAILED</span>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                            </>
+                        )}
+                    </button>
+                </nav>
+            </div>
+        </motion.div>
     );
 };

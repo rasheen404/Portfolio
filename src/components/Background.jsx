@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, useSpring } from 'framer-motion';
+import { AnimeMorphBackground } from './AnimeKit';
 
 export const Background = ({ theme }) => {
     const isLight = theme === 'light';
@@ -22,6 +23,18 @@ export const Background = ({ theme }) => {
             
             {/* Grid pattern */}
             <div className="absolute inset-0 grid-bg opacity-60" />
+
+            {/* Anime Morphing Backgrounds for Premium Feel */}
+            <AnimeMorphBackground 
+                className={`absolute top-[5%] left-[10%] w-[50%] h-[50%] filter blur-[120px] opacity-40 mix-blend-screen transition-colors duration-1000 ${
+                    isLight ? 'bg-purple-300' : 'bg-purple-900'
+                }`}
+            />
+            <AnimeMorphBackground 
+                className={`absolute bottom-[10%] right-[5%] w-[40%] h-[60%] filter blur-[140px] opacity-30 mix-blend-screen transition-colors duration-1000 ${
+                    isLight ? 'bg-indigo-300' : 'bg-indigo-900'
+                }`}
+            />
 
             {/* Primary ambient glow */}
             <div className={`absolute top-[-20%] left-[-10%] w-[60%] h-[60%] rounded-full filter blur-[150px] transition-all duration-1000 ${

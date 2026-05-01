@@ -1,158 +1,189 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
+import anime from 'animejs';
 import { portfolioData } from '../data.jsx';
-import { useTypingEffect } from '../hooks/useTypingEffect';
-import { DownloadIcon, LinkedinIcon, GithubIcon, MailIcon, MapPinIcon } from './Icons';
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { CharReveal, MagneticWrap, ScrollReveal, ParallaxSection } from './AnimationKit';
-
-const stagger = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: { staggerChildren: 0.12, delayChildren: 0.4 }
-    }
-};
-
-const fadeUp = {
-    hidden: { opacity: 0, y: 40, filter: 'blur(10px)' },
-    show: { 
-        opacity: 1, y: 0, filter: 'blur(0px)',
-        transition: { duration: 1, ease: [0.16, 1, 0.3, 1] }
-    }
-};
 
 export const Hero = () => {
-    const typedTitle = useTypingEffect(portfolioData.title);
-    const sectionRef = useRef(null);
-    const { scrollYProgress } = useScroll({
-        target: sectionRef,
-        offset: ["start start", "end start"],
-    });
+    const heroRef = useRef(null);
+    const textRef = useRef(null);
+    const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
     
-    // Parallax effects as user scrolls past hero
-    const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-    const heroY = useTransform(scrollYProgress, [0, 1], [0, 150]);
-    const heroScale = useTransform(scrollYProgress, [0, 1], [1, 0.95]);
-    const orbY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+    // Parallax effects on scroll
+    const y = useTransform(scrollYProgress, [0, 1], ["0%", "50%"]);
+    const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+
+    const [downloadState, setDownloadState] = useState('idle');
+    const [showSummary, setShowSummary] = useState(false);
+
+    const handleDownload = async (e) => {
+        e.preventDefault();
+        if (downloadState === 'loading') return;
+        
+        setDownloadState('loading');
+        
+        try {
+            const response = await fetch(portfolioData.cv_url);
+            if (!response.ok) throw new Error("Download failed");
+            
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Mohammed_Rasheen_Resume.pdf";
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+            
+            setDownloadState('success');
+        } catch (error) {
+            console.error(error);
+            setDownloadState('error');
+        } finally {
+            setTimeout(() => setDownloadState('idle'), 3000);
+        }
+    };
+
+    useEffect(() => {
+        // Elite cinematic entrance
+        anime.timeline({ easing: 'easeOutExpo' })
+        .add({
+            targets: '.hero-line',
+            scaleX: [0, 1],
+            duration: 1500,
+            delay: 200
+        })
+        .add({
+            targets: '.hero-char',
+            translateY: ['110%', '0%'],
+            rotateZ: [5, 0],
+            duration: 1200,
+            delay: anime.stagger(40),
+        }, '-=1000')
+        .add({
+            targets: '.hero-sub',
+            opacity: [0, 1],
+            translateY: [20, 0],
+            duration: 1000,
+        }, '-=800');
+    }, []);
+
+    const splitText = (text) => {
+        return text.split('').map((char, i) => (
+            <span key={i} className="hero-char inline-block" style={{ transformOrigin: '0 100%' }}>
+                {char === ' ' ? '\u00A0' : char}
+            </span>
+        ));
+    };
 
     return (
-        <section id="about" ref={sectionRef} className="relative min-h-screen flex items-center pt-32 pb-20 overflow-hidden">
-            <motion.div 
-                style={{ opacity: heroOpacity, y: heroY, scale: heroScale }}
-                className="section-container w-full"
-            >
-                <motion.div 
-                    variants={stagger}
-                    initial="hidden"
-                    animate="show"
-                    className="max-w-4xl"
-                >
-                    {/* Status badge */}
-                    <motion.div variants={fadeUp} className="mb-8">
-                        <div className="accent-badge">
-                            <span className="relative flex h-1.5 w-1.5">
-                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-emerald-400"></span>
-                            </span>
-                            Open to opportunities
+        <section ref={heroRef} id="about" className="relative h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-transparent pt-20">
+            <motion.div style={{ y, opacity }} className="relative z-10 flex flex-col items-center justify-center w-full px-6">
+                
+                {/* Ultra Premium Typography */}
+                <div className="w-full max-w-7xl relative">
+                    <h1 className="sr-only">{portfolioData.name} - Java Full-Stack Engineer</h1>
+                    
+                    <div className="overflow-hidden mb-[-4vw]">
+                        <div className="text-[12vw] font-black uppercase leading-none tracking-tighter text-transparent ml-12 md:ml-24" style={{ WebkitTextStroke: '2px rgba(255,255,255,0.2)' }}>
+                            {splitText("MOHAMMED")}
                         </div>
-                    </motion.div>
-
-                    {/* Name — character-by-character reveal */}
-                    <motion.div variants={fadeUp}>
-                        <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-bold tracking-tight text-gray-900 dark:text-white leading-[0.95] mb-6" style={{ letterSpacing: '-0.03em' }}>
-                            <CharReveal delay={0.5}>Mohammed</CharReveal>
-                            <br />
-                            <span className="text-gradient">
-                                <CharReveal delay={0.8}>Rasheen</CharReveal>
-                            </span>
-                        </h1>
-                    </motion.div>
-
-                    {/* Typed role */}
-                    <motion.div variants={fadeUp} className="mb-8">
-                        <p className="text-xl md:text-2xl lg:text-3xl text-gray-500 dark:text-gray-400 font-light flex items-center">
-                            <span className="text-accent font-mono text-lg mr-3">{'>'}</span>
-                            {typedTitle}
-                            <motion.span 
-                                animate={{ opacity: [1, 0] }} 
-                                transition={{ repeat: Infinity, duration: 0.8 }} 
-                                className="inline-block w-[3px] h-7 md:h-8 ml-1 bg-accent"
-                            />
-                        </p>
-                    </motion.div>
-
-                    {/* Bio */}
-                    <motion.p 
-                        variants={fadeUp}
-                        className="text-base md:text-lg text-gray-500 dark:text-gray-400 max-w-2xl leading-relaxed mb-12"
-                    >
-                        {portfolioData.summary}
-                    </motion.p>
-
-                    {/* Action row — with magnetic buttons */}
-                    <motion.div variants={fadeUp} className="flex flex-wrap items-center gap-4">
-                        <MagneticWrap strength={0.15}>
-                            <a 
-                                href={portfolioData.cv_url} 
-                                download="Mohammed_Rasheen_K_Java_Developer.pdf"
-                                className="group inline-flex items-center gap-3 px-6 py-3 rounded-xl bg-accent text-white font-medium text-sm hover:bg-accent-dark transition-all duration-300 shadow-glow-sm hover:shadow-glow"
-                                id="resume-download-btn"
-                            >
-                                <DownloadIcon />
-                                <span>Download Resume</span>
-                            </a>
-                        </MagneticWrap>
-
-                        <div className="flex items-center gap-2">
-                            {[
-                                { href: portfolioData.linkedin, icon: <LinkedinIcon />, label: "LinkedIn", id: "social-linkedin" },
-                                { href: portfolioData.github, icon: <GithubIcon />, label: "GitHub", id: "social-github" },
-                                { href: `mailto:${portfolioData.email}`, icon: <MailIcon />, label: "Email", id: "social-email" },
-                            ].map(({ href, icon, label, id }) => (
-                                <MagneticWrap key={label} strength={0.25}>
-                                    <a 
-                                        href={href}
-                                        target={label !== 'Email' ? '_blank' : undefined}
-                                        rel={label !== 'Email' ? 'noopener noreferrer' : undefined}
-                                        className="w-11 h-11 flex items-center justify-center rounded-xl bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] text-gray-500 dark:text-gray-400 hover:text-accent hover:border-accent/30 hover:bg-accent/5 dark:hover:bg-accent/10 transition-all duration-300"
-                                        aria-label={label}
-                                        id={id}
-                                    >
-                                        {icon}
-                                    </a>
-                                </MagneticWrap>
-                            ))}
-                        </div>
-
-                        <div className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-gray-100 dark:bg-white/[0.04] border border-gray-200 dark:border-white/[0.06] text-gray-500 dark:text-gray-400 text-sm">
-                            <MapPinIcon />
-                            <span>{portfolioData.location}</span>
-                        </div>
-                    </motion.div>
-                </motion.div>
-
-                {/* Decorative orbital element — with parallax */}
-                <motion.div 
-                    initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    transition={{ delay: 1.2, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
-                    style={{ y: orbY }}
-                    className="hidden lg:block absolute right-12 top-1/2 -translate-y-1/2"
-                >
-                    <div className="relative w-80 h-80">
-                        <div className="absolute inset-0 rounded-full border border-gray-200/30 dark:border-white/[0.03] animate-spin-slow" />
-                        <div className="absolute inset-8 rounded-full border border-gray-200/20 dark:border-white/[0.04] animate-spin-slow" style={{ animationDirection: 'reverse', animationDuration: '30s' }} />
-                        <div className="absolute inset-16 rounded-full border border-accent/10 animate-spin-slow" style={{ animationDuration: '25s' }} />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                            <div className="w-4 h-4 rounded-full bg-accent/40 animate-pulse-glow" />
-                        </div>
-                        <div className="absolute top-4 left-1/2 w-2 h-2 rounded-full bg-accent/60 animate-float" />
-                        <div className="absolute bottom-12 right-8 w-1.5 h-1.5 rounded-full bg-purple-400/40 animate-float-delayed" />
-                        <div className="absolute top-1/3 right-4 w-1 h-1 rounded-full bg-accent/30 animate-float-slow" />
                     </div>
-                </motion.div>
+                    
+                    <div className="hero-line w-full h-px bg-white/20 my-4 origin-left" />
+                    
+                    <div className="overflow-hidden flex justify-end mt-[-4vw]">
+                        <div className="text-[14vw] font-black uppercase leading-none tracking-tighter text-white mr-12 md:mr-24 drop-shadow-[0_0_50px_rgba(255,255,255,0.1)]">
+                            {splitText("RASHEEN")}
+                        </div>
+                    </div>
+                </div>
+
+                {/* Sub-text and actions */}
+                <div className="hero-sub flex flex-col md:flex-row items-center justify-between w-full max-w-5xl mt-24 px-4 gap-8">
+                    <p className="text-gray-400 font-light max-w-sm text-center md:text-left text-lg">
+                        Crafting elite digital experiences through <span className="text-white font-medium">engineering</span> and <span className="text-accent font-medium">design</span>.
+                    </p>
+                    
+                    <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+                        <button 
+                            onClick={handleDownload}
+                            className={`group relative px-8 py-4 rounded-full overflow-hidden transition-all duration-500 w-full sm:w-[200px] flex items-center justify-center
+                                ${downloadState === 'idle' ? 'border border-white/20 bg-white/5 backdrop-blur-md cursor-pointer' : ''}
+                                ${downloadState === 'loading' ? 'bg-white/20 text-white cursor-wait border border-white/40' : ''}
+                                ${downloadState === 'success' ? 'bg-green-500 text-white border-transparent shadow-[0_0_30px_rgba(34,197,94,0.4)]' : ''}
+                                ${downloadState === 'error' ? 'bg-red-500 text-white border-transparent shadow-[0_0_30px_rgba(239,68,68,0.4)]' : ''}
+                            `}
+                        >
+                            {downloadState === 'idle' && (
+                                <>
+                                    <div className="absolute inset-0 bg-accent translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out" />
+                                    <span className="relative z-10 font-mono text-sm tracking-widest text-white group-hover:text-black transition-colors duration-500">
+                                        DOWNLOAD CV
+                                    </span>
+                                </>
+                            )}
+                            {downloadState === 'loading' && (
+                                <svg className="animate-spin" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                            )}
+                            {downloadState === 'success' && (
+                                <span className="font-mono text-sm tracking-widest font-bold flex items-center gap-2">
+                                    DOWNLOADED <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                </span>
+                            )}
+                            {downloadState === 'error' && (
+                                <span className="font-mono text-sm tracking-widest font-bold flex items-center gap-2">
+                                    FAILED <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </span>
+                            )}
+                        </button>
+
+                        <button 
+                            onClick={() => setShowSummary(true)}
+                            className="group relative px-8 py-4 rounded-full overflow-hidden transition-all duration-500 w-full sm:w-[200px] flex items-center justify-center border border-accent/30 bg-accent/5 backdrop-blur-md hover:bg-accent/20"
+                        >
+                            <span className="relative z-10 font-mono text-sm tracking-widest text-accent transition-colors duration-500 flex items-center gap-2">
+                                SUMMARIZE ME
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
             </motion.div>
+
+            {/* Summary Modal */}
+            <AnimatePresence>
+                {showSummary && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+                        onClick={() => setShowSummary(false)}
+                    >
+                        <motion.div 
+                            initial={{ scale: 0.9, y: 20 }}
+                            animate={{ scale: 1, y: 0 }}
+                            exit={{ scale: 0.9, y: 20 }}
+                            onClick={(e) => e.stopPropagation()}
+                            className="relative w-full max-w-2xl bg-[#0A0A0A] border border-white/10 rounded-[2rem] p-8 md:p-12 shadow-[0_0_50px_rgba(0,0,0,0.8)]"
+                        >
+                            <button 
+                                onClick={() => setShowSummary(false)}
+                                className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-gray-400 hover:text-white hover:bg-white/10 transition-colors"
+                            >
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                            </button>
+                            
+                            <span className="px-3 py-1 text-xs font-mono tracking-widest text-accent bg-accent/10 border border-accent/20 rounded-full">TL;DR</span>
+                            <h3 className="text-3xl font-black mt-6 mb-4 text-white">Quick Summary</h3>
+                            <div className="text-gray-400 font-light leading-relaxed text-lg">
+                                <p>{portfolioData.summary}</p>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </section>
     );
 };
