@@ -32,10 +32,10 @@ export const Skills = () => {
                     transition={{ repeat: Infinity, ease: "linear", duration: 40 }}
                     className="flex"
                 >
-                    <span className="text-[15vw] font-black tracking-tighter uppercase mr-12" style={{ WebkitTextStroke: '2px rgba(255,255,255,1)', color: 'transparent' }}>
+                    <span className="text-[20vw] md:text-[15vw] font-black tracking-tighter uppercase mr-12" style={{ WebkitTextStroke: '1px rgba(255,255,255,1)', color: 'transparent' }}>
                         TECH STACK &nbsp;&mdash;&nbsp; ENGINEERING &nbsp;&mdash;&nbsp;
                     </span>
-                    <span className="text-[15vw] font-black tracking-tighter uppercase mr-12" style={{ WebkitTextStroke: '2px rgba(255,255,255,1)', color: 'transparent' }}>
+                    <span className="text-[20vw] md:text-[15vw] font-black tracking-tighter uppercase mr-12" style={{ WebkitTextStroke: '1px rgba(255,255,255,1)', color: 'transparent' }}>
                         TECH STACK &nbsp;&mdash;&nbsp; ENGINEERING &nbsp;&mdash;&nbsp;
                     </span>
                 </motion.div>

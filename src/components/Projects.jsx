@@ -35,7 +35,9 @@ export const Projects = () => {
                     const isActive = diff === 0;
                     const isVisible = Math.abs(diff) <= 1;
 
-                    const xTransform = `${diff * 60}%`;
+                    // Responsive transform: smaller offset on mobile
+                    const xOffset = typeof window !== 'undefined' && window.innerWidth < 768 ? 45 : 60;
+                    const xTransform = `${diff * xOffset}%`;
                     const scaleTransform = isActive ? 1 : 0.8;
                     const rotateYTransform = isActive ? 0 : diff > 0 ? -30 : 30;
                     const zTransform = isActive ? 100 : 0;

@@ -31,7 +31,7 @@ export const CustomCursor = () => {
         <>
             {/* Inner Dot */}
             <motion.div
-                className="fixed top-0 left-0 w-3 h-3 bg-accent rounded-full pointer-events-none z-[999] mix-blend-difference"
+                className="fixed top-0 left-0 w-3 h-3 bg-accent rounded-full pointer-events-none z-[999] mix-blend-difference hidden md:block"
                 animate={{
                     x: mousePosition.x - 6,
                     y: mousePosition.y - 6,
@@ -41,7 +41,7 @@ export const CustomCursor = () => {
             />
             {/* Outer Ring */}
             <motion.div
-                className="fixed top-0 left-0 w-10 h-10 border border-accent rounded-full pointer-events-none z-[999] mix-blend-difference"
+                className="fixed top-0 left-0 w-10 h-10 border border-accent rounded-full pointer-events-none z-[999] mix-blend-difference hidden md:block"
                 animate={{
                     x: mousePosition.x - 20,
                     y: mousePosition.y - 20,
