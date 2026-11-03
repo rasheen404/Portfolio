@@ -61,11 +61,11 @@ export function Projects() {
                 </div>
 
                 <div className="case__result">
-                  <ul className="case__outcomes">
-                    {p.outcomes.map((o) => (
-                      <li key={o.label}>
-                        <span className="case__value">{o.value}</span>
-                        <span className="case__label">{o.label}</span>
+                  <ul className="case__highlights" aria-label="Highlights">
+                    {p.highlights.map((h) => (
+                      <li key={h}>
+                        <Icon name="check" size={16} strokeWidth={2} />
+                        {h}
                       </li>
                     ))}
                   </ul>

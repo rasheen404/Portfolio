@@ -50,7 +50,7 @@ function ContactForm() {
   }
 
   return (
-    <form className="contact-form surface" name="contact" method="POST" data-netlify="true" netlify-honeypot="bot-field" onSubmit={onSubmit} noValidate>
+    <form className="contact-form surface" name="contact-app" method="POST" onSubmit={onSubmit} noValidate>
       <input type="hidden" name="form-name" value="contact" />
       <p className="sr-only" aria-hidden="true">
         <label>Leave this field empty <input name="bot-field" tabIndex={-1} autoComplete="off" /></label>

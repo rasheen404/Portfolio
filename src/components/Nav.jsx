@@ -1,5 +1,5 @@
 import './Nav.css';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { navItems, profile, RESUME_URL } from '../data/content';
 import { useActiveSection } from '../hooks/useActiveSection';
 import { useTheme } from '../hooks/useTheme';
@@ -8,6 +8,9 @@ import { isMac, openPalette } from '../lib/palette';
 import { Icon } from './ui/Icon';
 
 const ids = navItems.map((n) => n.id);
+const noopSubscribe = () => () => {};
+/** false while prerendering / hydrating, the real value right after. */
+const useIsMac = () => useSyncExternalStore(noopSubscribe, isMac, () => false);
 
 function ThemeToggle() {
   const { theme, toggle } = useTheme();
@@ -69,6 +72,7 @@ function useLiquidLens(lensRef, linkRefs, target) {
 }
 
 export function Nav() {
+  const mac = useIsMac();
   const active = useActiveSection(ids);
   const [hovered, setHovered] = useState(null);
   const [open, setOpen] = useState(false);
@@ -158,8 +162,8 @@ export function Nav() {
               openPalette();
             }}
             aria-label="Search and quick answers"
-            aria-keyshortcuts={isMac() ? 'Meta+K' : 'Control+K'}
-            title={`Search  ${isMac() ? '⌘K' : 'Ctrl K'}`}
+            aria-keyshortcuts={mac ? 'Meta+K' : 'Control+K'}
+            title={`Search  ${mac ? '⌘K' : 'Ctrl K'}`}
           >
             <Icon name="search" size={18} />
           </button>

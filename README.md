@@ -8,7 +8,7 @@ Design language: Liquid Glass–inspired materials on a midnight-navy / pearl-wh
 ```bash
 npm install
 npm run dev       # local dev server
-npm run build     # production build → dist/
+npm run build     # production build → dist/ (client build + prerender, see below)
 npm run preview   # serve the production build
 npm run lint
 ```
@@ -54,6 +54,23 @@ src/
 - **Hero stack** (`HeroStack.jsx`): an exploded, isometric glass stack — Interface → Services → Data —
   in pure CSS 3D (no WebGL). It tilts toward the pointer and separates on scroll. Callout positions are
   projected from the same rotations as the plane; see the comment in `HeroStack.css` if you change them.
+
+## SEO
+
+`npm run build` runs three steps: the client build, an SSR build of `src/entry-server.jsx`, and
+`scripts/prerender.mjs`, which renders the whole page into `dist/index.html` (the browser then
+hydrates it). Crawlers and link previews receive every heading, paragraph and link as plain HTML.
+
+The prerender script also generates, from `src/data/content.js`:
+- **JSON-LD** — `WebSite`, `ProfilePage`, `Person` (role, employer, education, credentials, skills,
+  profiles, résumé) and an `ItemList` of projects, so structured data can never drift from the page;
+- **`sitemap.xml`** with the build date as `lastmod`.
+
+Static head tags (title, description, canonical, robots, Open Graph / Twitter, `rel="me"`) live in
+`index.html`. After deploying, submit `https://rasheen.netlify.app/sitemap.xml` in Google Search Console.
+
+Rendering rule: components must not read `window`/`document` during render — only in effects or
+event handlers — or the prerendered HTML will not match the first client render.
 
 ## Deployment (Netlify)
 

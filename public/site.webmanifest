@@ -1,0 +1,13 @@
+{
+  "name": "Mohammed Rasheen K — Java Backend / Full-Stack Developer",
+  "short_name": "Rasheen",
+  "description": "Portfolio of Mohammed Rasheen K, Java backend and full-stack developer in Kozhikode, Kerala.",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#060a14",
+  "theme_color": "#060a14",
+  "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

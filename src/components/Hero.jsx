@@ -27,15 +27,19 @@ export function Hero() {
 
       <div className="container hero__inner">
         <div className="hero__copy">
-          <p className="hero__kicker enter" style={{ '--d': 0 }}>
-            <span className="hero__status" aria-hidden="true" />
-            <span className="hero__name">{profile.name}</span>
-            <span className="hero__role">{profile.role}</span>
-          </p>
-
-          <h1 id="hero-title" className="hero__title">
-            <Words text={plain} start={1} />{' '}
-            <Words text={accent} start={1 + plainCount} className="text-gradient" />
+          {/* One h1: who (name + role) and what (the tagline) — read as a single sentence */}
+          <h1 id="hero-title" className="hero__heading">
+            <span className="hero__kicker enter" style={{ '--d': 0 }}>
+              <span className="hero__status" aria-hidden="true" />
+              <span className="hero__name">{profile.name}</span>
+              <span className="sr-only">, </span>
+              <span className="hero__role">{profile.role}</span>
+              <span className="sr-only"> — </span>
+            </span>
+            <span className="hero__title">
+              <Words text={plain} start={1} />{' '}
+              <Words text={accent} start={1 + plainCount} className="text-gradient" />
+            </span>
           </h1>
 
           <p className="hero__lead lead enter" style={{ '--d': 7 }}>{hero.lead}</p>

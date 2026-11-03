@@ -100,14 +100,14 @@ export function CaseStudyDialog({ project, onClose, onNavigate }) {
                 </ul>
               </section>
 
-              {shown.outcomes.length > 0 && (
+              {shown.highlights.length > 0 && (
                 <section>
-                  <h3>Outcomes</h3>
-                  <ul className="case__outcomes case__outcomes--stacked">
-                    {shown.outcomes.map((o) => (
-                      <li key={o.label}>
-                        <span className="case__value">{o.value}</span>
-                        <span className="case__label">{o.label}</span>
+                  <h3>Highlights</h3>
+                  <ul className="case__highlights">
+                    {shown.highlights.map((h) => (
+                      <li key={h}>
+                        <Icon name="check" size={16} strokeWidth={2} />
+                        {h}
                       </li>
                     ))}
                   </ul>
