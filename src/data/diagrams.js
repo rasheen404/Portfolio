@@ -1,6 +1,6 @@
 /**
  * Simplified architecture diagrams for each case study.
- * Every node and connection reflects documented scope (résumé / public repo);
+ * Every node and connection reflects documented scope (current résumé / public repo);
  * nothing here depicts a real interface or confidential detail.
  *
  * Coordinates are [x, y, w, h]: `wide` for a ~1000-unit canvas, `tall` for a
@@ -12,57 +12,55 @@
 export const diagrams = {
   ams: {
     description:
-      'Simplified architecture: web and mobile clients call the AMS backend, a Java and Spring Boot REST service running in Docker and documented with Swagger, which integrates third-party flight-scheduling and terminal-management APIs.',
+      'Simplified architecture: web and mobile applications call the AMS backend — Java, Spring Boot and Apache Struts, deployed with Docker — which provides airport operations, ground handling, contract management and audit logging modules, integrates third-party APIs, and stores data in Oracle and Redis.',
     groups: [
-      { label: 'docker container', wide: [330, 112, 340, 216], tall: [20, 144, 380, 206] },
+      { label: 'docker container', wide: [330, 100, 340, 240], tall: [20, 144, 380, 230] },
     ],
     nodes: {
       web: { label: 'Web app', sub: 'Web client', kind: 'client', wide: [40, 92, 190, 72], tall: [20, 20, 180, 66] },
       mobile: { label: 'Mobile app', sub: 'Mobile client', kind: 'client', wide: [40, 276, 190, 72], tall: [220, 20, 180, 66] },
       api: {
         label: 'AMS backend',
-        sub: 'Java · Spring Boot',
+        sub: 'Java · Spring Boot · Struts',
         kind: 'service',
-        chips: ['REST APIs', 'Swagger docs'],
-        wide: [360, 160, 280, 120],
-        tall: [44, 184, 332, 128],
+        chips: ['Airport ops', 'Ground handling', 'Contracts', 'Audit logging'],
+        wide: [360, 146, 280, 148],
+        tall: [44, 186, 332, 158],
       },
-      flight: { label: 'Flight scheduling', sub: 'Third-party API', kind: 'external', wide: [770, 92, 190, 72], tall: [20, 438, 185, 72] },
-      terminal: { label: 'Terminal mgmt.', sub: 'Third-party API', kind: 'external', wide: [770, 276, 190, 72], tall: [215, 438, 185, 72] },
+      ext: { label: 'Third-party APIs', sub: 'Integrations', kind: 'external', wide: [770, 92, 190, 72], tall: [20, 462, 185, 72] },
+      db: { label: 'Oracle · Redis', sub: 'Data stores', kind: 'data', wide: [770, 276, 190, 72], tall: [215, 462, 185, 72] },
     },
     edges: [
       { from: 'web', to: 'api', label: 'REST' },
       { from: 'mobile', to: 'api', label: 'REST' },
-      { from: 'api', to: 'flight', label: 'integrate' },
-      { from: 'api', to: 'terminal', label: 'integrate' },
+      { from: 'api', to: 'ext', label: 'integrate' },
+      { from: 'api', to: 'db', label: 'data' },
     ],
   },
 
   auth: {
     description:
-      'Simplified architecture: a client application requests tokens from a Spring Authorization Server implementing OAuth 2.0 and OpenID Connect, which manages client registrations and issues JWTs to stateless microservices. Maven and Jenkins automate its build and deployment.',
+      'Simplified architecture: a client application signs in through a Spring Authorization Server implementing OAuth2 and OpenID Connect, with login, registration and token management APIs, refresh tokens and role-based access control. It issues signed JWTs that protected APIs validate.',
     groups: [],
     nodes: {
-      client: { label: 'Client app', sub: 'Requests access', kind: 'client', wide: [30, 154, 190, 72], tall: [20, 20, 166, 66] },
-      ci: { label: 'Maven → Jenkins', sub: 'Build & deploy', kind: 'pipeline', wide: [355, 346, 250, 64], tall: [200, 20, 200, 66] },
+      client: { label: 'Client app', sub: 'Login · register', kind: 'client', wide: [30, 154, 190, 72], tall: [120, 20, 180, 66] },
       auth: {
         label: 'Spring Authorization Server',
-        sub: 'OAuth 2.0 · OpenID Connect',
+        sub: 'OAuth2 · OpenID Connect',
         kind: 'service',
-        chips: ['Client registration', 'JWT expiry & logout'],
-        wide: [330, 118, 300, 144],
-        tall: [20, 156, 380, 140],
+        chips: ['Login & registration', 'Refresh tokens', 'Role-based access'],
+        wide: [330, 112, 300, 156],
+        tall: [20, 150, 380, 156],
       },
-      s1: { label: 'Microservice', labelTall: 'Service', sub: 'Stateless · JWT', subTall: 'JWT', kind: 'data', wide: [780, 40, 190, 72], tall: [20, 400, 118, 72] },
-      s2: { label: 'Microservice', labelTall: 'Service', sub: 'Stateless · JWT', subTall: 'JWT', kind: 'data', wide: [780, 154, 190, 72], tall: [151, 400, 118, 72] },
-      s3: { label: 'Microservice', labelTall: 'Service', sub: 'Stateless · JWT', subTall: 'JWT', kind: 'data', wide: [780, 268, 190, 72], tall: [282, 400, 118, 72] },
+      s1: { label: 'Protected API', labelTall: 'API', sub: 'JWT · RBAC', subTall: 'JWT', kind: 'data', wide: [780, 40, 190, 72], tall: [20, 400, 118, 72] },
+      s2: { label: 'Protected API', labelTall: 'API', sub: 'JWT · RBAC', subTall: 'JWT', kind: 'data', wide: [780, 154, 190, 72], tall: [151, 400, 118, 72] },
+      s3: { label: 'Protected API', labelTall: 'API', sub: 'JWT · RBAC', subTall: 'JWT', kind: 'data', wide: [780, 268, 190, 72], tall: [282, 400, 118, 72] },
     },
     edges: [
-      { from: 'client', to: 'auth', label: 'token request' },
+      { from: 'client', to: 'auth', label: 'OAuth2 / OIDC' },
       { from: 'auth', to: 's1' },
       { from: 'auth', to: 's2', label: 'signed JWT' },
       { from: 'auth', to: 's3' },
-      { from: 'ci', to: 'auth', dashed: true },
     ],
   },
 

@@ -28,7 +28,7 @@ export function Experience() {
                 </header>
 
                 {job.impact.length > 0 && (
-                  <ul className="impact" aria-label="Impact">
+                  <ul className="impact" aria-label="Highlights">
                     {job.impact.map((m) => (
                       <li key={m.label}>
                         <span className="impact__value">{m.value}</span>
