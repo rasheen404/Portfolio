@@ -1,43 +1,103 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="https://img.icons8.com/?size=100&id=LoyAjcvVKv1K&format=png&color=000000" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rasheen | Java Full-Stack Engineer</title>
-    <link rel="canonical" href="https://rasheen.dev/" />
-
-    <!-- Meta Tags for SEO -->
-    <meta name="description" content="Portfolio of Mohammed Rasheen K — Full Stack Java Developer specializing in Spring Boot, Microservices, and scalable enterprise applications." />
-    <meta name="keywords" content="Mohammed Rasheen, Portfolio, Java Developer, Full Stack Developer, Spring Boot, React, REST API, Microservices" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Mohammed Rasheen K — Java Backend Developer</title>
+    <meta name="description" content="Mohammed Rasheen K is a Java backend developer building reliable APIs, Spring Boot microservices and enterprise software for the airline and airport domain." />
     <meta name="author" content="Mohammed Rasheen K" />
-    <meta name="theme-color" content="#030303" />
+    <link rel="canonical" href="https://rasheen.netlify.app/" />
 
-    <!-- Open Graph / Facebook -->
+    <meta name="theme-color" content="#060a14" />
+    <meta name="color-scheme" content="dark light" />
+
+    <!-- Apply the saved appearance before first paint (dark is the default) -->
+    <script>
+      (function () {
+        var t = 'dark';
+        try { t = localStorage.getItem('theme') === 'light' ? 'light' : 'dark'; } catch (e) {}
+        var d = document.documentElement;
+        d.dataset.theme = t;
+        d.classList.add('js');
+        if (t === 'light') document.querySelector('meta[name="theme-color"]').setAttribute('content', '#f6f5f2');
+      })();
+    </script>
+
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://rasheen.dev/" />
-    <meta property="og:title" content="Rasheen | Java Full-Stack Engineer" />
-    <meta property="og:description" content="Portfolio of Mohammed Rasheen K — Full Stack Java Developer specializing in Spring Boot, Microservices, and scalable enterprise applications." />
-    <meta property="og:image" content="https://rasheen.dev/og-image.png" />
+    <meta property="og:site_name" content="Mohammed Rasheen K" />
+    <meta property="og:url" content="https://rasheen.netlify.app/" />
+    <meta property="og:title" content="Mohammed Rasheen K — Java Backend Developer" />
+    <meta property="og:description" content="Reliable APIs, Spring Boot microservices and enterprise software — case studies from aviation, identity and full-stack work." />
+    <meta property="og:image" content="https://rasheen.netlify.app/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Mohammed Rasheen K — I build the systems behind seamless experiences." />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://rasheen.dev/" />
-    <meta property="twitter:title" content="Rasheen | Java Full-Stack Engineer" />
-    <meta property="twitter:description" content="Portfolio of Mohammed Rasheen K — Full Stack Java Developer specializing in Spring Boot, Microservices, and scalable enterprise applications." />
-    <meta property="twitter:image" content="https://rasheen.dev/og-image.png" />
-    
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W0BC0HSDXD"></script>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Mohammed Rasheen K — Java Backend Developer" />
+    <meta name="twitter:description" content="Reliable APIs, Spring Boot microservices and enterprise software." />
+    <meta name="twitter:image" content="https://rasheen.netlify.app/og-image.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Mohammed Rasheen K",
+        "jobTitle": "Java Developer",
+        "worksFor": { "@type": "Organization", "name": "Lenok Solutions" },
+        "address": { "@type": "PostalAddress", "addressLocality": "Kozhikode", "addressRegion": "Kerala", "addressCountry": "IN" },
+        "alumniOf": "APJ Abdul Kalam Technical University",
+        "knowsAbout": ["Java", "Spring Boot", "Microservices", "REST APIs", "OAuth 2.0", "Docker", "Jenkins"],
+        "url": "https://rasheen.netlify.app/",
+        "sameAs": ["https://www.linkedin.com/in/mohammed-rasheen-k-88bb6b289", "https://github.com/rasheen404"]
+      }
+    </script>
+
+    <!-- Google tag (gtag.js) — events queue immediately; the library loads on the first
+         interaction (or 6s after load) to keep it off the critical rendering path -->
     <script>
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
       gtag('config', 'G-W0BC0HSDXD');
+      (function () {
+        var loaded = false, evts = ['pointerdown', 'keydown', 'scroll', 'touchstart'];
+        function go() {
+          if (loaded) return;
+          loaded = true;
+          evts.forEach(function (e) { removeEventListener(e, go, true); });
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-W0BC0HSDXD';
+          document.head.appendChild(s);
+        }
+        evts.forEach(function (e) { addEventListener(e, go, { capture: true, passive: true, once: true }); });
+        addEventListener('load', function () { setTimeout(go, 6000); });
+      })();
     </script>
   </head>
   <body>
-    <noscript>You need to enable JavaScript to view Mohammed Rasheen's professional portfolio.</noscript>
+    <!-- Static copy of the contact form so Netlify detects it at build time -->
+    <form name="contact" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+      <input name="bot-field" />
+    </form>
+
+    <noscript>
+      <p style="font-family: system-ui, sans-serif; padding: 2rem; max-width: 40rem">
+        Mohammed Rasheen K — Java Backend Developer. This portfolio needs JavaScript.
+        Reach me at <a href="mailto:mohammedrasheen2001@gmail.com">mohammedrasheen2001@gmail.com</a>,
+        on <a href="https://www.linkedin.com/in/mohammed-rasheen-k-88bb6b289">LinkedIn</a>,
+        or download my <a href="/resume/Mohammed_Rasheen_K_Resume.pdf">résumé (PDF)</a>.
+      </p>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

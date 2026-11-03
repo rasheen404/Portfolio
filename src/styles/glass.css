@@ -1,0 +1,248 @@
+/* ==========================================================================
+   Liquid Glass material
+   Reserved for controls, navigation and temporary overlays — never stacked.
+
+   Anatomy:
+     background   — adaptive tint + a soft top sheen
+     ::before     — luminous rim: a gradient hairline that is bright where
+                    light enters (top-left) and refracts dimmer around the edge
+     ::after      — pointer-following specular highlight (--mx / --my)
+     box-shadow   — inner highlight, chromatic edge fringe and depth
+   ========================================================================== */
+
+.glass {
+  --mx: 50%;
+  --my: 0%;
+  position: relative;
+  isolation: isolate;
+  background:
+    linear-gradient(180deg, var(--glass-sheen), transparent 55%),
+    var(--glass-tint);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-sat));
+  box-shadow:
+    inset 0 1px 0 0 var(--glass-inner-hi),
+    inset 0 -1px 0 0 var(--glass-inner-lo),
+    inset 1px 0 0 0 var(--glass-fringe-a),
+    inset -1px 0 0 0 var(--glass-fringe-b),
+    var(--shadow-md);
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    155deg,
+    var(--glass-rim-hi) 0%,
+    var(--glass-rim-mid) 28%,
+    var(--glass-rim-mid) 64%,
+    var(--glass-rim-lo) 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.glass::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    var(--spec-size, 140px) circle at var(--mx) var(--my),
+    var(--glass-spec),
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.glass:hover::after,
+.glass.is-lit::after {
+  opacity: 1;
+}
+
+.glass--strong {
+  background:
+    linear-gradient(180deg, var(--glass-sheen), transparent 55%),
+    var(--glass-tint-strong);
+}
+
+/* Reduced transparency & no-backdrop fallbacks — solid, still dimensional */
+@media (prefers-reduced-transparency: reduce) {
+  .glass,
+  .glass--strong {
+    background: var(--glass-solid);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass,
+  .glass--strong {
+    background: var(--glass-solid);
+  }
+}
+
+/* ==========================================================================
+   Buttons
+   ========================================================================== */
+
+.btn {
+  --btn-h: 52px;
+  --btn-px: 26px;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: var(--btn-h);
+  padding: 0 var(--btn-px);
+  border: 0;
+  border-radius: var(--r-pill);
+  font: inherit;
+  font-size: var(--fs-small);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  translate: var(--mag-x, 0) var(--mag-y, 0);
+  transition:
+    translate var(--dur-slow) var(--ease-spring),
+    scale var(--dur-base) var(--ease-spring),
+    background-color var(--dur-base) var(--ease-out),
+    color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.btn.is-magnetized {
+  transition:
+    translate 120ms linear,
+    scale var(--dur-base) var(--ease-spring),
+    background-color var(--dur-base) var(--ease-out),
+    box-shadow var(--dur-base) var(--ease-out);
+}
+.btn:active {
+  scale: 0.97;
+}
+.btn svg {
+  flex: none;
+  transition: transform var(--dur-base) var(--ease-spring);
+}
+.btn:hover .icon-nudge-x {
+  transform: translateX(3px);
+}
+.btn:hover .icon-nudge-y {
+  transform: translateY(2px);
+}
+
+.btn--sm {
+  --btn-h: 40px;
+  --btn-px: 16px;
+  font-size: var(--fs-caption);
+}
+
+/* Primary — the one solid call to action, softly illuminated */
+.btn--primary {
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 1px 2px hsl(var(--shadow-color) / 0.3),
+    0 10px 30px -8px color-mix(in srgb, var(--accent-strong) 45%, transparent);
+  overflow: hidden;
+}
+.btn--primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(120px circle at var(--mx, 50%) var(--my, 50%), color-mix(in srgb, var(--accent) 38%, transparent), transparent 70%);
+  opacity: 0;
+  transition: opacity var(--dur-base) var(--ease-out);
+  pointer-events: none;
+}
+.btn--primary:hover {
+  background: var(--btn-primary-hover);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 1px 2px hsl(var(--shadow-color) / 0.3),
+    0 14px 40px -8px color-mix(in srgb, var(--accent-strong) 60%, transparent);
+}
+.btn--primary:hover::after {
+  opacity: 1;
+}
+.btn--primary > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Glass — secondary actions */
+.btn--glass {
+  color: var(--text-1);
+  --spec-size: 110px;
+}
+.btn--glass:hover {
+  background:
+    linear-gradient(180deg, var(--glass-sheen), transparent 55%),
+    linear-gradient(var(--glass-hover), var(--glass-hover)),
+    var(--glass-tint);
+}
+
+/* Quiet text action */
+.btn--ghost {
+  --btn-px: 14px;
+  background: transparent;
+  color: var(--text-2);
+}
+.btn--ghost:hover {
+  color: var(--text-1);
+  background: var(--accent-soft);
+}
+
+/* Round glass icon button */
+.icon-btn {
+  display: inline-grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  padding: 0;
+  color: var(--text-1);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  --spec-size: 60px;
+  transition: scale var(--dur-base) var(--ease-spring), color var(--dur-base);
+}
+.icon-btn:active {
+  scale: 0.92;
+}
+
+/* Plain, borderless icon button used inside glass containers */
+.icon-btn--bare {
+  background: transparent;
+  box-shadow: none;
+}
+.icon-btn--bare:hover {
+  background: var(--glass-hover);
+}
+
+/* Text link with animated underline */
+.link {
+  color: var(--text-1);
+  font-weight: 500;
+  background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat;
+  transition: background-size var(--dur-base) var(--ease-out), color var(--dur-base);
+}
+.link:hover {
+  background-size: 100% 1px;
+}

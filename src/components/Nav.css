@@ -1,0 +1,342 @@
+/* ==========================================================================
+   Floating glass dock — three capsules, macOS Tahoe-style grouping:
+   identity (left) · sections (centre) · tools + CTA (right)
+   ========================================================================== */
+
+.dock {
+  --cap-h: 50px;
+  --cap-pad: 5px;
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: var(--z-nav);
+  padding: max(14px, env(safe-area-inset-top)) max(var(--gutter), env(safe-area-inset-right)) 0 max(var(--gutter), env(safe-area-inset-left));
+  pointer-events: none;
+  transition: padding var(--dur-slow) var(--ease-spring);
+}
+.dock.is-scrolled {
+  --cap-h: 46px;
+  --cap-pad: 4px;
+  padding-top: max(10px, env(safe-area-inset-top));
+}
+
+.dock__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 12px;
+  max-width: calc(var(--container) + 120px);
+  margin-inline: auto;
+}
+
+.dock__capsule {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  height: var(--cap-h);
+  padding: var(--cap-pad);
+  border-radius: var(--r-pill);
+  transition:
+    height var(--dur-slow) var(--ease-spring),
+    padding var(--dur-slow) var(--ease-spring),
+    background-color var(--dur-slow) var(--ease-out);
+}
+.dock.is-scrolled .dock__capsule {
+  background:
+    linear-gradient(180deg, var(--glass-sheen), transparent 55%),
+    var(--glass-tint-strong);
+}
+
+/* ---- Identity ---------------------------------------------------------- */
+
+.dock__brand {
+  justify-self: start;
+  gap: 10px;
+  padding-inline: 18px 20px;
+  color: var(--text-1);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  white-space: nowrap;
+}
+.dock__status {
+  width: 8px;
+  height: 8px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--success) 20%, transparent), 0 0 10px color-mix(in srgb, var(--success) 60%, transparent);
+}
+.dock__name--short {
+  display: none;
+}
+
+/* ---- Sections + liquid lens -------------------------------------------- */
+
+.dock__nav {
+  position: relative;
+  justify-self: center;
+}
+.dock__links {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dock__link {
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--cap-h) - var(--cap-pad) * 2);
+  padding: 0 16px;
+  border-radius: var(--r-pill);
+  color: var(--text-2);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  transition: color var(--dur-base) var(--ease-out), height var(--dur-slow) var(--ease-spring);
+}
+.dock__link:hover,
+.dock__link.is-active {
+  color: var(--text-1);
+}
+.dock__link:focus-visible {
+  outline-offset: -3px;
+}
+
+/* A lighter "drop" of glass rather than a filled pill */
+.dock__lens {
+  position: absolute;
+  top: var(--cap-pad);
+  left: var(--cap-pad); /* links measure from the list, which sits inside the capsule padding */
+  height: calc(var(--cap-h) - var(--cap-pad) * 2);
+  border-radius: var(--r-pill);
+  opacity: 0;
+  background:
+    radial-gradient(120% 100% at 50% 0%, rgba(255, 255, 255, 0.16), transparent 70%),
+    rgba(255, 255, 255, 0.06);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.04),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.12),
+    0 6px 16px -8px rgba(0, 0, 0, 0.5);
+  transform-origin: center;
+  /* transform & width are animated by the liquid-lens script, not CSS */
+  transition:
+    height var(--dur-slow) var(--ease-spring),
+    top var(--dur-slow) var(--ease-spring),
+    opacity var(--dur-base);
+  pointer-events: none;
+}
+:root[data-theme='light'] .dock__lens {
+  background: linear-gradient(180deg, #ffffff, rgba(255, 255, 255, 0.82));
+  box-shadow:
+    inset 0 0 0 0.5px rgba(20, 30, 50, 0.08),
+    0 1px 2px rgba(20, 30, 60, 0.08),
+    0 6px 16px -8px rgba(30, 50, 100, 0.3);
+}
+
+/* ---- Tools + CTA -------------------------------------------------------- */
+
+.dock__tools {
+  justify-self: end;
+  gap: 2px;
+}
+.dock-btn {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: calc(var(--cap-h) - var(--cap-pad) * 2);
+  height: calc(var(--cap-h) - var(--cap-pad) * 2);
+  min-width: 40px;
+  min-height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--text-2);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--dur-base), background-color var(--dur-base), scale var(--dur-base) var(--ease-spring);
+}
+.dock-btn:hover {
+  color: var(--text-1);
+  background: var(--glass-hover);
+}
+.dock-btn:active {
+  scale: 0.92;
+}
+
+.dock__cta {
+  display: inline-flex;
+  align-items: center;
+  height: calc(var(--cap-h) - var(--cap-pad) * 2);
+  margin-left: 4px;
+  padding: 0 18px;
+  border-radius: var(--r-pill);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-fg);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 4px 14px -6px color-mix(in srgb, var(--accent-strong) 55%, transparent);
+  transition: background-color var(--dur-base), scale var(--dur-base) var(--ease-spring), height var(--dur-slow) var(--ease-spring);
+}
+.dock__cta:hover {
+  background: var(--btn-primary-hover);
+}
+.dock__cta:active {
+  scale: 0.96;
+}
+
+/* Theme toggle — icons cross-rotate */
+.theme-toggle__icon {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  opacity: 0;
+  transform: rotate(-70deg) scale(0.6);
+  transition:
+    opacity var(--dur-base) var(--ease-out),
+    transform var(--dur-slow) var(--ease-spring);
+}
+.theme-toggle__icon.is-on {
+  opacity: 1;
+  transform: none;
+}
+
+/* Menu button (mobile only) */
+.dock__menu-btn {
+  display: none;
+}
+.dock__burger {
+  position: relative;
+  width: 18px;
+  height: 12px;
+}
+.dock__burger span {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 1.6px;
+  border-radius: 2px;
+  background: currentColor;
+  transition: transform var(--dur-slow) var(--ease-spring), top var(--dur-base) var(--ease-out);
+}
+.dock__burger span:first-child { top: 2px; }
+.dock__burger span:last-child { top: 8.4px; }
+.dock.is-open .dock__burger span:first-child { top: 5.2px; transform: rotate(45deg); }
+.dock.is-open .dock__burger span:last-child { top: 5.2px; transform: rotate(-45deg); }
+
+.dock__sheet {
+  display: none;
+}
+
+/* ---- Mid widths: shorter name, tighter links --------------------------- */
+@media (max-width: 1179.98px) {
+  .dock__name--full { display: none; }
+  .dock__name--short { display: inline; }
+  .dock__link { padding: 0 13px; }
+}
+
+/* ---- Mobile: identity + tools capsules, sheet for sections -------------- */
+@media (max-width: 899.98px) {
+  .dock {
+    padding-inline: max(12px, env(safe-area-inset-left)) max(12px, env(safe-area-inset-right));
+  }
+  .dock__row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 8px;
+  }
+  .dock__nav {
+    display: none;
+  }
+  .dock__brand {
+    padding-inline: 16px 18px;
+  }
+  .dock__cta {
+    display: none;
+  }
+  .dock__menu-btn {
+    display: inline-grid;
+  }
+  .dock-btn {
+    min-width: 42px;
+    min-height: 42px;
+  }
+
+  .dock__sheet {
+    pointer-events: auto;
+    display: grid;
+    gap: 8px;
+    width: min(100%, 420px);
+    margin: 10px 0 0 auto;
+    padding: 8px;
+    border-radius: 26px;
+    transform-origin: top right;
+    opacity: 0;
+    transform: translateY(-8px) scale(0.92);
+    visibility: hidden;
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-slow) var(--ease-spring),
+      visibility 0s linear var(--dur-slow);
+  }
+  .dock.is-open .dock__sheet {
+    opacity: 1;
+    transform: none;
+    visibility: visible;
+    transition-delay: 0s;
+  }
+  .dock__sheet ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .dock__sheet li {
+    opacity: 0;
+    transform: translateY(-4px);
+    transition:
+      opacity var(--dur-base) var(--ease-out),
+      transform var(--dur-slow) var(--ease-spring);
+  }
+  .dock.is-open .dock__sheet li {
+    opacity: 1;
+    transform: none;
+    transition-delay: calc(var(--i) * 28ms + 50ms);
+  }
+  .dock__sheet-link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    min-height: 52px;
+    padding: 0 14px;
+    border-radius: 18px;
+    color: var(--text-1);
+    font-size: 1.125rem;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+  .dock__sheet-index {
+    color: var(--text-3);
+  }
+  .dock__sheet-link.is-active {
+    background: var(--glass-hover);
+    box-shadow: inset 0 1px 0 var(--glass-inner-hi), inset 0 0 0 0.5px var(--hairline-strong);
+  }
+  .dock__sheet-link.is-active .dock__sheet-index {
+    color: var(--accent);
+  }
+  .dock__sheet-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 8px 6px 6px;
+    border-top: 1px solid var(--hairline);
+  }
+  .dock__sheet-actions .btn {
+    --btn-h: 46px;
+  }
+}
