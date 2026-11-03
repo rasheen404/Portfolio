@@ -49,7 +49,11 @@ src/
   specular (`::after`, driven by `--mx/--my`), inner highlight and chromatic edge fringe.
 - Falls back to solid surfaces under `prefers-reduced-transparency` or without `backdrop-filter`.
 - Decorative motion is skipped under `prefers-reduced-motion`, data saver, or low-power devices.
-- The hero orb is pure CSS (no WebGL); its inner grid shifts opposite the pointer to read as refraction.
+- **Navigation dock:** three glass capsules (identity · sections · tools + CTA). The active-section lens
+  is animated with the Web Animations API so it stretches between links like a liquid drop.
+- **Hero stack** (`HeroStack.jsx`): an exploded, isometric glass stack — Interface → Services → Data —
+  in pure CSS 3D (no WebGL). It tilts toward the pointer and separates on scroll. Callout positions are
+  projected from the same rotations as the plane; see the comment in `HeroStack.css` if you change them.
 
 ## Deployment (Netlify)
 

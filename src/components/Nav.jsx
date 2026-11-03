@@ -47,13 +47,14 @@ function useLiquidLens(lensRef, linkRefs, target) {
       if (animate && from && (from.x !== next.x || from.w !== next.w) && !prefersReducedMotion()) {
         const left = Math.min(from.x, next.x);
         const right = Math.max(from.x + from.w, next.x + next.w);
+        // Per-keyframe easing: ease into the stretch, spring out of it
         lens.animate(
           [
-            { transform: `translateX(${from.x}px) scaleY(1)`, width: `${from.w}px` },
-            { transform: `translateX(${left + (right - left) * 0.08}px) scaleY(0.86)`, width: `${(right - left) * 0.84}px`, offset: 0.42 },
+            { transform: `translateX(${from.x}px) scaleY(1)`, width: `${from.w}px`, easing: 'cubic-bezier(0.4, 0, 0.2, 1)' },
+            { transform: `translateX(${left + (right - left) * 0.06}px) scaleY(0.84)`, width: `${(right - left) * 0.88}px`, offset: 0.4, easing: 'cubic-bezier(0.3, 1.3, 0.5, 1)' },
             { transform: `translateX(${next.x}px) scaleY(1)`, width: `${next.w}px` },
           ],
-          { duration: 560, easing: 'cubic-bezier(0.3, 1.25, 0.5, 1)' }
+          { duration: 620 }
         );
       }
       prev.current = next;

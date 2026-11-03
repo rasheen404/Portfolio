@@ -121,9 +121,8 @@
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.12),
     0 6px 16px -8px rgba(0, 0, 0, 0.5);
   transform-origin: center;
+  /* transform & width are animated by the liquid-lens script, not CSS */
   transition:
-    transform var(--dur-slow) var(--ease-spring),
-    width var(--dur-slow) var(--ease-spring),
     height var(--dur-slow) var(--ease-spring),
     top var(--dur-slow) var(--ease-spring),
     opacity var(--dur-base);

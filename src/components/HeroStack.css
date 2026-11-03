@@ -9,6 +9,7 @@
   --explode: 0;
   --size: min(500px, 100%);
   --gap: calc(19cqw + var(--explode) * 6cqw);
+  --cx: 38cqw; /* horizontal centre of the stack; callouts derive from it */
   position: relative;
   width: var(--size);
   aspect-ratio: 1 / 1.04;
@@ -26,7 +27,7 @@
 
 .stack-plane {
   position: absolute;
-  left: 38cqw;
+  left: var(--cx);
   top: 70cqw;
   width: 50cqw;
   height: 50cqw;
@@ -172,7 +173,7 @@
 /* ---- Flat callouts (readable labels, like an exploded product diagram) --
    Each label sits at its slab's right-hand corner, projected from the same
    rotations as .stack-plane (rotateX 56°, rotateZ -42°, face 50cqw):
-     x = centre + 0.706·s           → 38cqw + 35.3cqw
+     x = centre + 0.706·s           → var(--cx) + 35.3cqw
      y = centre + 0.021·s − 0.829·k·gap (k = height in the stack)        */
 
 .stack-callouts {
@@ -186,7 +187,7 @@
 .stack-callout {
   --k: calc(2 - var(--i));
   position: absolute;
-  left: calc(73.3cqw + 5cqw);
+  left: calc(var(--cx) + 35.3cqw + 5cqw);
   top: calc(71cqw - var(--k) * 0.829 * var(--gap));
   translate: 0 -50%;
   display: grid;
@@ -255,13 +256,20 @@
   display: none;
 }
 
+/* Narrower desktops: shift the sculpture left so callouts stay on screen */
+@media (max-width: 1279.98px) {
+  .stack-stage {
+    --cx: 27cqw;
+  }
+}
+
 /* Small screens: the sculpture alone, no callouts */
 @media (max-width: 899.98px) {
   .stack-stage {
     --size: min(320px, 72vw);
   }
-  .stack-plane {
-    left: 50%;
+  .stack-stage {
+    --cx: 50cqw;
   }
   .stack-callouts {
     display: none;
