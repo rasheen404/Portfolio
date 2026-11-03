@@ -1,0 +1,225 @@
+/* Metric-matched fallback so the swap to Inter causes no layout shift */
+@font-face {
+  font-family: 'Inter Fallback';
+  src: local('Arial'), local('Helvetica Neue'), local('Helvetica'), local('Roboto');
+  ascent-override: 90.44%;
+  descent-override: 22.52%;
+  line-gap-override: 0%;
+  size-adjust: 107.12%;
+}
+
+/* ==========================================================================
+   Design tokens
+   Midnight navy · pearl white · icy blue. Dark is the default appearance.
+   ========================================================================== */
+
+:root {
+  /* ---- Type ---------------------------------------------------------- */
+  --font-sans: 'Inter Variable', 'Inter Fallback', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, 'SF Mono', 'Cascadia Code', Menlo, Consolas, monospace;
+
+  --fs-hero: clamp(2.5rem, 1.4rem + 4.6vw, 5.5rem);
+  --fs-display: clamp(2.2rem, 1.45rem + 3.1vw, 4.25rem);
+  --fs-h2: clamp(2rem, 1.45rem + 2.2vw, 3.25rem);
+  --fs-h3: clamp(1.5rem, 1.18rem + 1.15vw, 2.25rem);
+  --fs-h4: clamp(1.125rem, 1.05rem + 0.3vw, 1.3rem);
+  --fs-lead: clamp(1.125rem, 1.02rem + 0.42vw, 1.375rem);
+  --fs-body: 1.0625rem;
+  --fs-small: 0.9375rem;
+  --fs-caption: 0.8125rem;
+  --fs-micro: 0.75rem;
+
+  --lh-tight: 1.02;
+  --lh-snug: 1.14;
+  --lh-body: 1.62;
+
+  --tracking-hero: -0.045em;
+  --tracking-display: -0.035em;
+  --tracking-title: -0.022em;
+  --tracking-body: -0.006em;
+  --tracking-label: 0.01em;
+
+  /* ---- Spacing (4pt base) -------------------------------------------- */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.5rem;
+  --space-6: 2rem;
+  --space-7: 3rem;
+  --space-8: 4rem;
+  --space-9: 6rem;
+  --space-10: 8rem;
+
+  --section-pad: clamp(4.5rem, 3rem + 5vw, 8rem);
+  --rail-gap: clamp(1.5rem, 0.5rem + 3.5vw, 4.5rem);
+  --gutter: clamp(1.25rem, 0.6rem + 2.6vw, 2.5rem);
+  --container: 1200px;
+
+  /* ---- Radius -------------------------------------------------------- */
+  --r-xs: 8px;
+  --r-sm: 12px;
+  --r-md: 18px;
+  --r-lg: 26px;
+  --r-xl: 36px;
+  --r-pill: 999px;
+
+  /* ---- Motion -------------------------------------------------------- */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  /* Critically-damped-ish spring (ζ≈0.72), ~4% overshoot */
+  --ease-spring: cubic-bezier(0.3, 1.25, 0.5, 1);
+  --ease-spring-lively: cubic-bezier(0.3, 1.25, 0.5, 1);
+  --dur-fast: 180ms;
+  --dur-base: 320ms;
+  --dur-slow: 640ms;
+  --dur-reveal: 900ms;
+
+  /* ---- Layers -------------------------------------------------------- */
+  --z-atmo: -1;
+  --z-float: 40;
+  --z-nav: 50;
+  --z-overlay: 80;
+
+  /* ==== Dark theme (default) ========================================== */
+  color-scheme: dark;
+
+  --bg: #060a14;
+  --bg-deep: #03060d;
+  --surface-1: #0b1120;
+  --surface-2: #10172a;
+  --surface-3: #162036;
+  --surface-sunken: #080d19;
+
+  --text-1: #f2f4f8;
+  --text-2: #b2bccd;
+  --text-3: #8a95a9;
+  --text-inverse: #070b14;
+
+  --accent: #a9d1ff;           /* icy blue */
+  --accent-strong: #7fb6ff;
+  --accent-ink: #cfe5ff;
+  --accent-violet: #b4a8ff;
+  --accent-soft: rgba(127, 182, 255, 0.14);
+  --success: #7fe0b5;
+  --danger: #ff9b9b;
+
+  --hairline: rgba(200, 215, 240, 0.09);
+  --hairline-strong: rgba(200, 215, 240, 0.16);
+  --focus: #a9d1ff;
+
+  --shadow-color: 220 60% 2%;
+  --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.4), 0 2px 8px -2px hsl(var(--shadow-color) / 0.4);
+  --shadow-md: 0 2px 4px hsl(var(--shadow-color) / 0.35), 0 12px 32px -8px hsl(var(--shadow-color) / 0.55);
+  --shadow-lg: 0 4px 12px hsl(var(--shadow-color) / 0.35), 0 32px 80px -16px hsl(var(--shadow-color) / 0.7);
+
+  /* Glass material */
+  --glass-tint: rgba(18, 26, 46, 0.52);
+  --glass-tint-strong: rgba(14, 21, 38, 0.74);
+  --glass-solid: #121a2d;            /* reduced-transparency fallback */
+  --glass-blur: 20px;
+  --glass-sat: 175%;
+  --glass-rim-hi: rgba(235, 242, 255, 0.34);
+  --glass-rim-mid: rgba(200, 215, 245, 0.08);
+  --glass-rim-lo: rgba(180, 200, 240, 0.16);
+  --glass-inner-hi: rgba(255, 255, 255, 0.14);
+  --glass-inner-lo: rgba(255, 255, 255, 0.03);
+  --glass-fringe-a: rgba(140, 190, 255, 0.10);
+  --glass-fringe-b: rgba(185, 165, 255, 0.08);
+  --glass-sheen: rgba(255, 255, 255, 0.07);
+  --glass-spec: rgba(205, 228, 255, 0.22);
+  --glass-hover: rgba(255, 255, 255, 0.05);
+
+  /* Atmosphere */
+  --atmo-a: rgba(64, 120, 255, 0.30);
+  --atmo-b: rgba(122, 96, 255, 0.22);
+  --atmo-c: rgba(40, 140, 220, 0.16);
+  --grid-line: rgba(170, 195, 240, 0.055);
+
+  /* Buttons */
+  --btn-primary-bg: #eef3fb;
+  --btn-primary-fg: #070b14;
+  --btn-primary-hover: #ffffff;
+
+  /* Orb */
+  --orb-core-a: #5b8dff;
+  --orb-core-b: #9a7dff;
+  --orb-core-c: #8fe3ff;
+  --orb-body: rgba(30, 48, 92, 0.35);
+  --orb-rim: rgba(220, 235, 255, 0.55);
+  --orb-shadow: rgba(0, 0, 0, 0.55);
+}
+
+/* ==== Light theme ======================================================= */
+:root[data-theme='light'] {
+  color-scheme: light;
+
+  --bg: #f6f5f2;               /* warm pearl */
+  --bg-deep: #ecebe7;
+  --surface-1: #ffffff;
+  --surface-2: #fbfbfa;
+  --surface-3: #f1f2f5;
+  --surface-sunken: #efeeea;
+
+  --text-1: #16181d;           /* charcoal */
+  --text-2: #444a55;
+  --text-3: #5f6673;
+  --text-inverse: #ffffff;
+
+  --accent: #2563c9;
+  --accent-strong: #1d55b3;
+  --accent-ink: #1a4ea6;
+  --accent-violet: #6a58d6;
+  --accent-soft: rgba(37, 99, 201, 0.09);
+  --success: #137a52;
+  --danger: #b42318;
+
+  --hairline: rgba(20, 30, 50, 0.09);
+  --hairline-strong: rgba(20, 30, 50, 0.16);
+  --focus: #2563c9;
+
+  --shadow-color: 225 25% 40%;
+  --shadow-sm: 0 1px 2px hsl(var(--shadow-color) / 0.08), 0 2px 8px -2px hsl(var(--shadow-color) / 0.1);
+  --shadow-md: 0 2px 4px hsl(var(--shadow-color) / 0.06), 0 14px 32px -10px hsl(var(--shadow-color) / 0.2);
+  --shadow-lg: 0 4px 12px hsl(var(--shadow-color) / 0.08), 0 32px 80px -20px hsl(var(--shadow-color) / 0.28);
+
+  --glass-tint: rgba(255, 255, 255, 0.56);
+  --glass-tint-strong: rgba(255, 255, 255, 0.78);
+  --glass-solid: #fbfbfa;
+  --glass-blur: 18px;
+  --glass-sat: 180%;
+  --glass-rim-hi: rgba(255, 255, 255, 0.95);
+  --glass-rim-mid: rgba(255, 255, 255, 0.35);
+  --glass-rim-lo: rgba(150, 165, 195, 0.32);
+  --glass-inner-hi: rgba(255, 255, 255, 0.85);
+  --glass-inner-lo: rgba(120, 135, 170, 0.10);
+  --glass-fringe-a: rgba(120, 170, 255, 0.10);
+  --glass-fringe-b: rgba(170, 150, 255, 0.08);
+  --glass-sheen: rgba(255, 255, 255, 0.5);
+  --glass-spec: rgba(255, 255, 255, 0.85);
+  --glass-hover: rgba(255, 255, 255, 0.45);
+
+  --atmo-a: rgba(150, 190, 255, 0.40);
+  --atmo-b: rgba(196, 182, 255, 0.36);
+  --atmo-c: rgba(170, 215, 245, 0.30);
+  --grid-line: rgba(40, 60, 110, 0.06);
+
+  --btn-primary-bg: #16181d;
+  --btn-primary-fg: #ffffff;
+  --btn-primary-hover: #000000;
+
+  --orb-core-a: #7aa8ff;
+  --orb-core-b: #b9a6ff;
+  --orb-core-c: #9fe6ff;
+  --orb-body: rgba(255, 255, 255, 0.32);
+  --orb-rim: rgba(255, 255, 255, 0.95);
+  --orb-shadow: rgba(60, 80, 130, 0.28);
+}
+
+/* A spring curve where the browser supports linear() easing. */
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    --ease-spring: linear(0, 0.025, 0.089, 0.177, 0.278, 0.384, 0.489, 0.588, 0.677, 0.756, 0.824, 0.88, 0.926, 0.962, 0.989, 1.01, 1.023, 1.032, 1.037, 1.038, 1.038, 1.035, 1.032, 1.028, 1.024, 1.02, 1.016, 1.013, 1.01, 1.007, 1.005, 1.003, 1);
+    --ease-spring-lively: linear(0, 0.056, 0.194, 0.372, 0.559, 0.731, 0.875, 0.985, 1.061, 1.106, 1.125, 1.124, 1.111, 1.09, 1.066, 1.043, 1.023, 1.008, 0.996, 0.989, 0.985, 0.984, 0.985, 0.987, 0.99, 0.993, 0.996, 0.998, 1, 1.001, 1.002, 1.002, 1);
+  }
+}

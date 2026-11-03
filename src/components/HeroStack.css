@@ -1,0 +1,269 @@
+/* ==========================================================================
+   Hero stack — exploded refractive glass layers (pure CSS 3D)
+   All dimensions in cqw so the sculpture scales with its stage.
+   ========================================================================== */
+
+.stack-stage {
+  --px: 0;
+  --py: 0;
+  --explode: 0;
+  --size: min(500px, 100%);
+  --gap: calc(19cqw + var(--explode) * 6cqw);
+  position: relative;
+  width: var(--size);
+  aspect-ratio: 1 / 1.04;
+  container-type: inline-size;
+  perspective: 2200px;
+  perspective-origin: 50% 30%;
+}
+
+.stack-float {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  animation: stack-float 10s var(--ease-in-out) infinite;
+}
+
+.stack-plane {
+  position: absolute;
+  left: 38cqw;
+  top: 70cqw;
+  width: 50cqw;
+  height: 50cqw;
+  translate: -50% -50%;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(56deg - var(--py) * 5deg)) rotateZ(calc(-42deg + var(--px) * 8deg));
+}
+
+/* ---- Slabs ------------------------------------------------------------- */
+
+.slab {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: translateZ(calc(var(--z) * var(--gap)));
+  transition: transform 900ms var(--ease-spring);
+}
+
+.slab__face,
+.slab__edge {
+  position: absolute;
+  inset: 0;
+  border-radius: 15%;
+}
+
+/* Thickness: two offset under-layers read as a glass edge */
+.slab__edge {
+  transform: translateZ(-1.1cqw);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--slab-tint) 45%, transparent), color-mix(in srgb, var(--slab-tint) 20%, transparent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--slab-rim) 40%, transparent);
+}
+.slab__edge--2 {
+  transform: translateZ(-2.2cqw);
+  opacity: 0.6;
+}
+
+.slab__face {
+  overflow: hidden;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.04) 42%, rgba(255, 255, 255, 0.1) 100%),
+    color-mix(in srgb, var(--slab-tint) var(--slab-alpha, 34%), transparent);
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--slab-rim) 75%, transparent),
+    inset 1.2cqw 1.2cqw 3cqw -1.5cqw rgba(255, 255, 255, 0.35),
+    inset -1.5cqw -1.5cqw 4cqw -2cqw color-mix(in srgb, var(--slab-tint) 80%, transparent);
+}
+
+/* Moving specular sweep, driven by the pointer */
+.slab__sheen {
+  position: absolute;
+  inset: -30%;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.28) 48%, transparent 58%);
+  transform: translateX(calc(var(--px) * 18%)) translateY(calc(var(--py) * -12%));
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+
+/* Where the beam pierces each layer */
+.slab__port {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7cqw;
+  height: 7cqw;
+  translate: -50% -50%;
+  border-radius: 50%;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 85%, white) 0 18%, color-mix(in srgb, var(--accent) 35%, transparent) 22%, transparent 70%);
+  box-shadow: 0 0 0 0.35cqw color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+.slab__art {
+  position: absolute;
+  right: 7%;
+  bottom: 7%;
+  width: 38%;
+  height: 38%;
+  overflow: visible;
+}
+
+/* Layer palettes — icy interface, violet services, deep-blue data */
+.slab--interface { --slab-tint: #8fc4ff; --slab-rim: #e6f2ff; --slab-alpha: 26%; }
+.slab--services  { --slab-tint: #9c8cff; --slab-rim: #ddd6ff; --slab-alpha: 32%; }
+.slab--data      { --slab-tint: #3f6fe0; --slab-rim: #b9cdff; --slab-alpha: 40%; }
+:root[data-theme='light'] .slab--interface { --slab-tint: #b9dbff; --slab-rim: #ffffff; --slab-alpha: 55%; }
+:root[data-theme='light'] .slab--services  { --slab-tint: #cfc6ff; --slab-rim: #ffffff; --slab-alpha: 55%; }
+:root[data-theme='light'] .slab--data      { --slab-tint: #9db9f5; --slab-rim: #ffffff; --slab-alpha: 60%; }
+
+/* Slab artwork strokes */
+.sa-frame { fill: rgba(255, 255, 255, 0.06); stroke: rgba(255, 255, 255, 0.55); stroke-width: 1.6; }
+.sa-line { fill: rgba(255, 255, 255, 0.7); }
+.sa-line--soft { fill: rgba(255, 255, 255, 0.4); }
+.sa-accent { fill: var(--accent); }
+.sa-node { fill: rgba(255, 255, 255, 0.16); stroke: rgba(255, 255, 255, 0.8); stroke-width: 1.6; }
+.sa-link { fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 1.6; stroke-dasharray: 3 4; }
+.sa-disk { fill: rgba(255, 255, 255, 0.12); stroke: rgba(255, 255, 255, 0.8); stroke-width: 1.6; }
+:root[data-theme='light'] .sa-frame,
+:root[data-theme='light'] .sa-node,
+:root[data-theme='light'] .sa-disk { stroke: rgba(30, 60, 130, 0.55); fill: rgba(255, 255, 255, 0.5); }
+:root[data-theme='light'] .sa-line { fill: rgba(30, 60, 130, 0.45); }
+:root[data-theme='light'] .sa-line--soft { fill: rgba(30, 60, 130, 0.25); }
+:root[data-theme='light'] .sa-link { stroke: rgba(30, 60, 130, 0.45); }
+
+/* ---- Light beam through the layers ------------------------------------- */
+
+.stack-beam {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.5cqw;
+  height: calc(var(--gap) * 2 + 9cqw);
+  margin: calc((var(--gap) * 2 + 9cqw) * -1) 0 0 -0.25cqw;
+  transform-origin: 50% 100%;
+  transform: rotateX(-90deg);
+  border-radius: 1cqw;
+  background: linear-gradient(0deg, color-mix(in srgb, var(--accent) 10%, transparent), color-mix(in srgb, var(--accent) 85%, white) 70%, transparent);
+  box-shadow: 0 0 2cqw color-mix(in srgb, var(--accent) 60%, transparent);
+  transition: height 900ms var(--ease-spring), margin 900ms var(--ease-spring);
+}
+/* A request travelling down from the interface to the data layer */
+.stack-beam::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  width: 2.2cqw;
+  height: 2.2cqw;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 0 2.5cqw 0.8cqw color-mix(in srgb, var(--accent) 80%, transparent);
+  animation: stack-pulse 3.6s var(--ease-in-out) infinite;
+}
+
+.stack-shadow {
+  position: absolute;
+  inset: -8%;
+  transform: translateZ(-4cqw);
+  border-radius: 30%;
+  background: radial-gradient(closest-side, var(--orb-shadow), transparent);
+  opacity: 0.9;
+}
+
+/* ---- Flat callouts (readable labels, like an exploded product diagram) --
+   Each label sits at its slab's right-hand corner, projected from the same
+   rotations as .stack-plane (rotateX 56°, rotateZ -42°, face 50cqw):
+     x = centre + 0.706·s           → 38cqw + 35.3cqw
+     y = centre + 0.021·s − 0.829·k·gap (k = height in the stack)        */
+
+.stack-callouts {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none;
+}
+.stack-callout {
+  --k: calc(2 - var(--i));
+  position: absolute;
+  left: calc(73.3cqw + 5cqw);
+  top: calc(71cqw - var(--k) * 0.829 * var(--gap));
+  translate: 0 -50%;
+  display: grid;
+  grid-template-columns: auto auto;
+  column-gap: 8px;
+  row-gap: 3px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.01em;
+}
+.stack-callout::before {
+  /* leader line from the slab corner */
+  content: '';
+  position: absolute;
+  right: calc(100% + 6px);
+  top: 50%;
+  width: 4cqw;
+  height: 1px;
+  background: linear-gradient(90deg, var(--accent), var(--hairline-strong));
+}
+.stack-callout::after {
+  content: '';
+  position: absolute;
+  right: calc(100% + 6px + 4cqw);
+  top: calc(50% - 2.5px);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+}
+.stack-callout__index {
+  color: var(--accent);
+  grid-row: span 2;
+  align-self: center;
+}
+.stack-callout__name {
+  color: var(--text-1);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}
+.stack-callout__meta {
+  color: var(--text-3);
+}
+
+@keyframes stack-float {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -1.6cqw, 0); }
+}
+@keyframes stack-pulse {
+  0% { top: 0; opacity: 0; }
+  12% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { top: calc(100% - 2.2cqw); opacity: 0; }
+}
+
+.stack-stage.is-static *,
+.stack-stage.is-paused * {
+  animation-play-state: paused !important;
+}
+.stack-stage.is-static .stack-beam::after {
+  display: none;
+}
+
+/* Small screens: the sculpture alone, no callouts */
+@media (max-width: 899.98px) {
+  .stack-stage {
+    --size: min(320px, 72vw);
+  }
+  .stack-plane {
+    left: 50%;
+  }
+  .stack-callouts {
+    display: none;
+  }
+}

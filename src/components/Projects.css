@@ -1,0 +1,491 @@
+/* ==========================================================================
+   Projects — case studies drawn as systems
+   ========================================================================== */
+
+.cases {
+  display: grid;
+  gap: clamp(4.5rem, 3rem + 4vw, 7rem);
+}
+
+/* ---- Architecture tile ------------------------------------------------- */
+
+.case__media {
+  --mx: 50%;
+  --my: 50%;
+  position: relative;
+  padding: clamp(1.25rem, 0.5rem + 2.5vw, 2.75rem) clamp(1rem, 0.5rem + 4vw, 5rem) clamp(3rem, 2.25rem + 2vw, 4rem);
+  border-radius: var(--r-xl);
+  overflow: hidden;
+  cursor: pointer;
+  background:
+    radial-gradient(520px circle at var(--mx) var(--my), color-mix(in srgb, var(--accent) 9%, transparent), transparent 65%),
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 55%),
+    radial-gradient(90% 80% at 100% 100%, color-mix(in srgb, var(--accent-violet) 10%, transparent), transparent 55%),
+    radial-gradient(circle, var(--grid-line) 1.2px, transparent 1.4px) 0 0 / 22px 22px,
+    var(--surface-sunken);
+  border: 1px solid var(--hairline);
+  box-shadow: inset 0 1px 0 var(--glass-inner-lo);
+  transition:
+    transform var(--dur-slow) var(--ease-spring),
+    box-shadow var(--dur-slow) var(--ease-out),
+    border-color var(--dur-base);
+}
+.case__media:hover {
+  transform: translateY(-3px);
+  border-color: var(--hairline-strong);
+  box-shadow: var(--shadow-lg), inset 0 1px 0 var(--glass-inner-lo);
+}
+
+.case__caption {
+  position: absolute;
+  left: clamp(1.25rem, 0.75rem + 2vw, 2rem);
+  bottom: 1.15rem;
+  color: var(--text-3);
+}
+.case__hint {
+  position: absolute;
+  right: 1.1rem;
+  bottom: 0.85rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  color: var(--text-1);
+  background: var(--glass-tint-strong);
+  box-shadow: inset 0 1px 0 var(--glass-inner-hi), inset 0 0 0 1px var(--hairline-strong);
+  transition: transform var(--dur-slow) var(--ease-spring), background-color var(--dur-base);
+}
+.case__media:hover .case__hint {
+  transform: translate(2px, -2px);
+}
+
+/* ---- Diagram ----------------------------------------------------------- */
+
+.system-diagram {
+  position: relative;
+  aspect-ratio: var(--ar-wide);
+  content-visibility: auto;
+}
+.diagram {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  font-family: var(--font-sans);
+}
+.diagram--tall {
+  display: none;
+}
+/* Below 900px the wide drawing would shrink type past legibility — switch to the tall layout */
+@media (max-width: 899.98px) {
+  .system-diagram {
+    aspect-ratio: var(--ar-tall);
+    max-width: 480px;
+    margin-inline: auto;
+  }
+  .diagram--wide { display: none; }
+  .diagram--tall { display: block; }
+}
+
+.dg-group rect {
+  fill: color-mix(in srgb, var(--accent) 3%, transparent);
+  stroke: color-mix(in srgb, var(--accent) 38%, transparent);
+  stroke-width: 1;
+  stroke-dasharray: 5 6;
+}
+.dg-group text {
+  fill: var(--accent);
+}
+
+.dg-box {
+  fill: var(--surface-1);
+  stroke: var(--hairline-strong);
+  stroke-width: 1;
+  transition: stroke var(--dur-base);
+}
+:root[data-theme='light'] .dg-box {
+  filter: drop-shadow(0 2px 6px rgba(30, 45, 90, 0.07));
+}
+.dg-node--service .dg-box {
+  fill: color-mix(in srgb, var(--accent) 7%, var(--surface-1));
+  stroke: color-mix(in srgb, var(--accent) 45%, transparent);
+  stroke-width: 1.25;
+}
+.dg-label {
+  fill: var(--text-1);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.dg-mono {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+.dg-sub {
+  fill: var(--text-3);
+}
+.dg-kind { fill: var(--text-3); }
+.dg-node--service .dg-kind { fill: var(--accent); }
+.dg-node--external .dg-kind { fill: var(--accent-violet); }
+.dg-node--data .dg-kind { fill: color-mix(in srgb, var(--accent) 55%, var(--success)); }
+
+.dg-chip rect {
+  fill: var(--accent-soft);
+  stroke: color-mix(in srgb, var(--accent) 25%, transparent);
+}
+.dg-chip text {
+  fill: var(--accent-ink);
+}
+:root[data-theme='light'] .dg-chip text { fill: var(--accent-strong); }
+
+.dg-line {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text-3) 70%, transparent);
+  stroke-width: 1.25;
+}
+.dg-edge.is-dashed .dg-line {
+  stroke-dasharray: 4 5;
+}
+.dg-arrow {
+  fill: none;
+  stroke: color-mix(in srgb, var(--text-3) 85%, transparent);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.dg-flow {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-dasharray: 2 14;
+  opacity: 0;
+  transition: opacity var(--dur-base);
+}
+.case__media:hover .dg-flow,
+.case-dialog .dg-flow {
+  opacity: 1;
+  animation: dg-flow 1.4s linear infinite;
+}
+@keyframes dg-flow {
+  to { stroke-dashoffset: -32; }
+}
+
+.dg-edge-label rect {
+  fill: var(--surface-sunken);
+  stroke: var(--hairline-strong);
+}
+.dg-edge-label text {
+  fill: var(--text-2);
+}
+
+/* ---- Body: identity · story · result ----------------------------------- */
+
+.case__body {
+  display: grid;
+  grid-template-columns: minmax(0, 4fr) minmax(0, 5fr) minmax(0, 4fr);
+  column-gap: var(--rail-gap);
+  padding-top: clamp(1.75rem, 1.25rem + 1.5vw, 2.5rem);
+}
+
+.case__meta {
+  display: flex;
+  gap: 12px;
+  margin-bottom: var(--space-3);
+  color: var(--text-3);
+}
+.case__num {
+  color: var(--accent);
+}
+.case__title {
+  font-size: clamp(1.6rem, 1.3rem + 1.1vw, 2.25rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: var(--space-2);
+}
+.case__category {
+  font-size: var(--fs-small);
+  color: var(--text-2);
+  margin-bottom: var(--space-4);
+}
+
+.case__summary {
+  color: var(--text-1);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  margin-bottom: var(--space-4);
+}
+.case__problem {
+  font-size: var(--fs-small);
+  line-height: 1.65;
+}
+.case__problem .mono {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--text-3);
+}
+
+.case__result {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+  gap: var(--space-5);
+}
+.case__outcomes {
+  display: grid;
+  gap: var(--space-4);
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.case__outcomes li {
+  display: grid;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-4);
+  padding-top: var(--space-3);
+  border-top: 1px solid var(--hairline);
+}
+.case__value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.04em;
+  color: var(--text-1);
+  font-variant-numeric: tabular-nums;
+}
+.case__label {
+  font-size: var(--fs-small);
+  color: var(--text-2);
+  line-height: 1.45;
+}
+
+.projects__more {
+  margin-top: clamp(3.5rem, 2.5rem + 3vw, 5rem);
+  color: var(--text-3);
+  font-size: var(--fs-small);
+  text-align: center;
+}
+
+@media (max-width: 1023.98px) {
+  .case__body {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    row-gap: var(--space-5);
+  }
+  .case__id {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 639.98px) {
+  .case__media {
+    border-radius: var(--r-lg);
+    padding: 1rem 0.75rem 3.25rem;
+  }
+  .case__body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Case study dialog
+   ========================================================================== */
+
+.case-dialog {
+  width: min(920px, calc(100vw - 32px));
+  max-width: none;
+  max-height: min(92svh, 1000px);
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--r-xl);
+  background: var(--surface-1);
+  color: var(--text-2);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  overscroll-behavior: contain;
+}
+.case-dialog[open] {
+  display: flex;
+  animation: dialog-in 520ms var(--ease-spring) both;
+}
+.case-dialog::backdrop {
+  background: color-mix(in srgb, var(--bg-deep) 62%, transparent);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+  backdrop-filter: blur(10px) saturate(140%);
+  animation: fade-in 320ms var(--ease-out) both;
+}
+@media (prefers-reduced-transparency: reduce) {
+  .case-dialog::backdrop {
+    background: color-mix(in srgb, var(--bg-deep) 88%, transparent);
+    backdrop-filter: none;
+  }
+}
+.case-dialog.is-closing {
+  animation: dialog-out 240ms var(--ease-out) both;
+}
+.case-dialog.is-closing::backdrop {
+  animation: fade-out 240ms var(--ease-out) both;
+}
+
+@keyframes dialog-in {
+  from { opacity: 0; transform: translateY(24px) scale(0.965); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes dialog-out {
+  to { opacity: 0; transform: translateY(12px) scale(0.98); }
+}
+@keyframes fade-in { from { opacity: 0; } }
+@keyframes fade-out { to { opacity: 0; } }
+
+.case-dialog__scroll {
+  position: relative;
+  width: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.case-dialog__close {
+  position: sticky;
+  top: 16px;
+  float: right;
+  margin: 16px 16px -60px 0;
+  z-index: 2;
+}
+
+.case-dialog__media {
+  position: relative;
+  padding: clamp(1.5rem, 1rem + 3vw, 3rem) clamp(1rem, 0.5rem + 3vw, 3rem);
+  background:
+    radial-gradient(120% 90% at 20% 0%, color-mix(in srgb, var(--accent) 16%, transparent), transparent 60%),
+    radial-gradient(90% 80% at 100% 100%, color-mix(in srgb, var(--accent-violet) 14%, transparent), transparent 60%),
+    var(--surface-sunken);
+  border-bottom: 1px solid var(--hairline);
+}
+
+.case-dialog__content {
+  padding: clamp(1.75rem, 1rem + 3vw, 3.5rem);
+  animation: fade-up 600ms var(--ease-out) both;
+}
+.case-dialog__title {
+  font-size: clamp(2rem, 1.5rem + 2vw, 3rem);
+  line-height: 1.06;
+  letter-spacing: -0.032em;
+  margin-bottom: var(--space-4);
+}
+.case-dialog__content > .lead {
+  max-width: 40rem;
+}
+
+.case-dialog__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-7) clamp(2rem, 1rem + 3vw, 4rem);
+  margin-top: var(--space-7);
+  padding-top: var(--space-6);
+  border-top: 1px solid var(--hairline);
+}
+.case-dialog__grid h3 {
+  font-size: var(--fs-caption);
+  font-weight: 600;
+  letter-spacing: var(--tracking-label);
+  color: var(--accent);
+  margin-bottom: var(--space-3);
+}
+.case-dialog__grid p {
+  line-height: 1.65;
+}
+.case-dialog__stack {
+  grid-column: 1 / -1;
+}
+.case-dialog__list {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.case-dialog__list li {
+  position: relative;
+  padding-left: 1.3rem;
+  line-height: 1.6;
+  font-size: var(--fs-small);
+}
+.case-dialog__list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.68em;
+  width: 7px;
+  height: 1px;
+  background: var(--text-3);
+}
+.case__outcomes--stacked {
+  margin: 0;
+}
+.case__outcomes--stacked li:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.case-dialog__footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-top: var(--space-7);
+  padding-top: var(--space-5);
+  border-top: 1px solid var(--hairline);
+}
+.case-dialog__note {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--fs-caption);
+  color: var(--text-3);
+}
+.case-dialog__next {
+  margin-left: auto;
+  color: var(--text-1);
+}
+
+@media (max-width: 639.98px) {
+  .case-dialog {
+    width: 100vw;
+    max-height: 94svh;
+    margin: auto 0 0;
+    border-radius: var(--r-lg) var(--r-lg) 0 0;
+    border-bottom: 0;
+  }
+  .case-dialog[open] {
+    animation-name: sheet-in;
+  }
+  .case-dialog.is-closing {
+    animation-name: sheet-out;
+  }
+  .case-dialog__media {
+    padding: 3.5rem 0.75rem 1rem;
+  }
+  .case-dialog__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-6);
+  }
+  .case-dialog__content {
+    padding-bottom: calc(env(safe-area-inset-bottom) + 2rem);
+  }
+  .case-dialog__next {
+    margin-left: 0;
+    padding: 0;
+    white-space: normal;
+    text-align: left;
+  }
+}
+@keyframes sheet-in {
+  from { transform: translateY(100%); }
+  to { transform: none; }
+}
+@keyframes sheet-out {
+  to { transform: translateY(100%); }
+}

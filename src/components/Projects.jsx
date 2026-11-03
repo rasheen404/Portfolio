@@ -1,142 +1,97 @@
-import React, { useState } from 'react';
-import { portfolioData } from '../data.jsx';
-import { motion } from 'framer-motion';
+import { useCallback, useState } from 'react';
+import { profile, projects } from '../data/content';
+import { CaseStudyDialog } from './CaseStudyDialog';
+import { SystemDiagram } from './SystemDiagram';
+import { Button } from './ui/Button';
+import { Chapter } from './ui/Chapter';
+import { Icon } from './ui/Icon';
+import './Projects.css';
 
-const mod = (n, m) => ((n % m) + m) % m;
+export function Projects() {
+  const [openId, setOpenId] = useState(null);
 
-export const Projects = () => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const projects = portfolioData.projects;
-    const N = projects.length;
+  const open = useCallback((id) => setOpenId(id), []);
+  const close = useCallback((lastId) => {
+    setOpenId(null);
+    // Return focus to the "Read case study" button of the last-viewed project
+    requestAnimationFrame(() => document.querySelector(`[data-trigger="${lastId}"]`)?.focus({ preventScroll: true }));
+  }, []);
 
-    const handleNext = () => setCurrentIndex(prev => prev + 1);
-    const handlePrev = () => setCurrentIndex(prev => prev - 1);
+  return (
+    <section id="projects" className="section projects" aria-labelledby="projects-title">
+      <div className="container">
+        <Chapter
+          index="03"
+          label="Selected work"
+          id="projects-title"
+          title="Case studies, drawn as systems."
+          lead="Each project shown as its architecture — what it needed to solve, how the pieces connect, and what changed."
+        />
 
-    const activeIndex = mod(currentIndex, N);
-
-    return (
-        <section id="projects" className="py-24 md:py-32 bg-[#000000] relative z-10 overflow-hidden perspective-[2000px] min-h-screen flex flex-col justify-center items-center">
-            
-            {/* Elegant Header Area */}
-            <div className="w-full max-w-7xl mx-auto px-6 mb-16 text-center z-50">
-                <span className="text-xs md:text-sm font-mono tracking-widest text-accent mb-4 block uppercase">
-                    Selected Archives
+        <div className="cases">
+          {projects.map((p, i) => (
+            <article key={p.id} className="case" data-reveal aria-labelledby={`case-${p.id}`}>
+              <div className="case__media" data-spotlight onClick={() => open(p.id)} role="presentation">
+                <SystemDiagram id={p.diagram} />
+                <span className="case__caption mono" aria-hidden="true">Simplified architecture</span>
+                <span className="case__hint" aria-hidden="true">
+                  <Icon name="arrowUpRight" size={18} />
                 </span>
-                <h2 className="text-5xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter text-white drop-shadow-2xl">
-                    Featured Works
-                </h2>
-            </div>
+              </div>
 
-            {/* 3D Carousel Container */}
-            <div className="relative w-full max-w-7xl mx-auto h-[450px] md:h-[600px] flex items-center justify-center">
-                {projects.map((project, i) => {
-                    const diff = mod(i - activeIndex + Math.floor(N / 2), N) - Math.floor(N / 2);
+              <div className="case__body">
+                <div className="case__id">
+                  <p className="case__meta mono">
+                    <span className="case__num">{`3.${i + 1}`}</span>
+                    <span>{p.period}</span>
+                  </p>
+                  <h3 id={`case-${p.id}`} className="case__title">{p.name}</h3>
+                  <p className="case__category">{p.category}</p>
+                  <ul className="tag-list" aria-label="Key technologies">
+                    {p.stack.slice(0, 4).map((t) => <li key={t} className="tag">{t}</li>)}
+                  </ul>
+                </div>
 
-                    const isActive = diff === 0;
-                    const isVisible = Math.abs(diff) <= 1;
+                <div className="case__story">
+                  <p className="case__summary">{p.summary}</p>
+                  <p className="case__problem">
+                    <span className="mono">Problem</span>
+                    {p.problem}
+                  </p>
+                </div>
 
-                    // Responsive transform: smaller offset on mobile
-                    const xOffset = typeof window !== 'undefined' && window.innerWidth < 768 ? 45 : 60;
-                    const xTransform = `${diff * xOffset}%`;
-                    const scaleTransform = isActive ? 1 : 0.8;
-                    const rotateYTransform = isActive ? 0 : diff > 0 ? -30 : 30;
-                    const zTransform = isActive ? 100 : 0;
-                    const opacityTransform = isVisible ? (isActive ? 1 : 0.3) : 0;
-                    const zIndexTransform = 50 - Math.abs(diff);
+                <div className="case__result">
+                  <ul className="case__outcomes">
+                    {p.outcomes.map((o) => (
+                      <li key={o.label}>
+                        <span className="case__value">{o.value}</span>
+                        <span className="case__label">{o.label}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button variant="glass" size="sm" onClick={() => open(p.id)} aria-haspopup="dialog" data-trigger={p.id}>
+                    Read case study <Icon name="arrowRight" size={16} className="icon-nudge-x" />
+                  </Button>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
 
-                    return (
-                        <motion.div
-                            key={i}
-                            animate={{
-                                x: xTransform,
-                                scale: scaleTransform,
-                                rotateY: rotateYTransform,
-                                z: zTransform,
-                                opacity: opacityTransform,
-                            }}
-                            transition={{
-                                duration: 0.8,
-                                ease: [0.16, 1, 0.3, 1]
-                            }}
-                            style={{
-                                zIndex: zIndexTransform,
-                                transformStyle: "preserve-3d"
-                            }}
-                            className={`absolute w-[85%] md:w-[60%] h-full rounded-[2.5rem] bg-[#050505] border overflow-hidden shadow-2xl ${isActive ? 'border-accent/40' : 'border-white/10'}`}
-                        >
-                            <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent z-10 pointer-events-none" />
-                            
-                            <div className={`absolute inset-0 opacity-30 ${isActive ? 'bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-accent/20 via-transparent to-transparent' : 'bg-transparent'} transition-all duration-1000 pointer-events-none`} />
+        <p className="projects__more" data-reveal>
+          More experiments and learning projects live on{' '}
+          <a className="link" href={profile.github} target="_blank" rel="noopener noreferrer">
+            GitHub<span className="sr-only"> (opens in a new tab)</span>
+          </a>
+          .
+        </p>
+      </div>
 
-                            <div className="relative z-20 h-full p-8 md:p-12 lg:p-16 flex flex-col justify-between">
-                                <div className="flex justify-between items-start">
-                                    <span className="px-5 py-2 rounded-full border border-white/20 backdrop-blur-md bg-white/5 text-xs font-mono tracking-widest text-accent uppercase">
-                                        {project.period}
-                                    </span>
-                                    <span className="text-7xl md:text-8xl font-black text-white/5 tracking-tighter pointer-events-none">
-                                        0{i + 1}
-                                    </span>
-                                </div>
-
-                                <div>
-                                    <h3 className="text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter text-white mb-6">
-                                        {project.name}
-                                    </h3>
-                                    
-                                    <div className="space-y-4 max-w-lg">
-                                        {project.points.slice(0, 2).map((point, idx) => (
-                                            <p key={idx} className="text-gray-400 font-light text-sm md:text-base leading-relaxed">
-                                                {point}
-                                            </p>
-                                        ))}
-                                    </div>
-                                    
-                                    {isActive && (
-                                        <motion.button 
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ delay: 0.4 }}
-                                            className="mt-10 px-8 py-4 rounded-full bg-white text-black font-bold uppercase tracking-widest text-xs hover:bg-accent hover:shadow-[0_0_30px_rgba(0,229,255,0.4)] transition-all duration-300 flex items-center gap-3"
-                                        >
-                                            View Project
-                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                                        </motion.button>
-                                    )}
-                                </div>
-                            </div>
-
-                            {!isActive && (
-                                <div 
-                                    className="absolute inset-0 z-50 cursor-pointer" 
-                                    onClick={() => setCurrentIndex(currentIndex + diff)}
-                                />
-                            )}
-                        </motion.div>
-                    );
-                })}
-            </div>
-
-            {/* Premium Navigation Controls */}
-            <div className="mt-16 z-50 flex items-center gap-8 px-8 py-3 rounded-full bg-[#050505]/80 border border-white/10 backdrop-blur-2xl shadow-[0_20px_40px_rgba(0,0,0,0.5)]">
-                <button 
-                    onClick={handlePrev}
-                    className="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-accent transition-colors duration-300 group"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:-translate-x-1 transition-transform"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-                </button>
-                
-                <span className="font-mono text-sm tracking-widest text-gray-400">
-                    <span className="text-white">0{activeIndex + 1}</span> <span className="mx-2 opacity-50">/</span> 0{N}
-                </span>
-
-                <button 
-                    onClick={handleNext}
-                    className="w-12 h-12 flex items-center justify-center text-gray-500 hover:text-accent transition-colors duration-300 group"
-                >
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:translate-x-1 transition-transform"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                </button>
-            </div>
-
-        </section>
-    );
-};
+      <CaseStudyDialog
+        project={projects.find((p) => p.id === openId) ?? null}
+        onClose={close}
+        onNavigate={setOpenId}
+      />
+    </section>
+  );
+}
